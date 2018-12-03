@@ -1,0 +1,149 @@
+import {
+  JupyterLab, JupyterLabPlugin
+} from '@jupyterlab/application';
+import { ICommandPalette } from '@jupyterlab/apputils';
+import { ISettingRegistry, URLExt, PathExt } from '@jupyterlab/coreutils';
+import { IDocumentManager } from '@jupyterlab/docmanager';
+import { ServerConnection } from '@jupyterlab/services';
+import { CommandRegistry } from '@phosphor/commands';
+import { JSONObject } from '@phosphor/coreutils';
+import { Message } from '@phosphor/messaging';
+import { ISignal, Signal } from '@phosphor/signaling';
+import { CommandPalette } from '@phosphor/widgets';
+import "../style/index.css";
+
+/** Structure of the JSON response from the server */
+interface QuickOpenResponse {
+  readonly contents: { [key: string]: string[] },
+  readonly scanSeconds: number,
+}
+
+
+/** Makes a HTTP request for the server-side quick open scan */
+async function fetchContents(excludes: string[]): Promise<QuickOpenResponse> {
+  const query = excludes.map(exclude => {
+    return 'excludes='+encodeURIComponent(exclude);
+  }).join('&');
+
+  const settings = ServerConnection.makeSettings();
+  const fullUrl = URLExt.join(settings.baseUrl, '/api/quickopen') + '?' + query;
+  const response = await ServerConnection.makeRequest(fullUrl, {method: 'GET'}, settings);
+  if (response.status !== 200) {
+    throw new ServerConnection.ResponseError(response);
+  }
+  return await response.json();
+}
+
+
+/**
+ * Shows files nested under directories in the root notebooks directory
+ * configured on the server.
+ */
+class QuickOpenWidget extends CommandPalette {
+  private _pathSelected = new Signal<this, string>(this);
+  private _settings: JSONObject;
+
+  constructor(options: CommandPalette.IOptions) {
+    super(options);
+
+    this.id = 'jupyterlab-quickopen';
+    this.title.iconClass = 'jp-SideBar-tabIcon jp-FaIcon fa fa-search';
+    this.title.caption = 'Quick Open';
+  }
+
+  /** Signal when a selected path is activated. */
+  get pathSelected(): ISignal<this, string> {
+    return this._pathSelected;
+  }
+
+  /** Current extension settings */
+  set settings(settings: JSONObject) {
+    this._settings = settings;
+  }
+
+  /**
+   * Refreshes the widget with the paths of files on the server.
+   */
+  protected async onActivateRequest(msg: Message) {
+    super.onActivateRequest(msg);
+
+    // Fetch the current contents from the server
+    let response = await fetchContents(<string[]>this._settings.excludes);
+
+    // Remove all paths from the view
+    this.clearItems();
+
+    for(let category in response.contents) {
+      for(let fn of response.contents[category]) {
+        // Creates commands that are relative file paths on the server
+        let command = `${category}/${fn}`;
+        if(!this.commands.hasCommand(command)) {
+          // Only add the command to the registry if it does not yet exist
+          // TODO: Track disposables and remove
+          this.commands.addCommand(command, {
+            label: fn,
+            execute: () => {
+              // Emit a selection signal
+              this._pathSelected.emit(command);
+            }
+          });
+        }
+        // Make the file visible under its parent directory heading
+        this.addItem({ command, category });
+      }
+    }
+  }
+
+}
+
+
+/**
+ * Initialization data for the jupyterlab-quickopen extension.
+ */
+const extension: JupyterLabPlugin<void> = {
+  id: '@parente/jupyterlab-quickopen:plugin',
+  autoStart: true,
+  requires: [ICommandPalette, IDocumentManager, ISettingRegistry],
+  activate: async (
+    app: JupyterLab,
+    palette: ICommandPalette,
+    docManager: IDocumentManager,
+    settingRegistry: ISettingRegistry) => {
+
+    window['docManager'] = docManager;
+
+    console.log(`Activated extension: ${extension.id}`);
+    const commands: CommandRegistry = new CommandRegistry();
+    const widget: QuickOpenWidget = new QuickOpenWidget({ commands });
+    const settings: ISettingRegistry.ISettings = await settingRegistry.load(extension.id);
+
+    // Listen for path selection signals and show the selected files in the
+    // appropriate editor/viewer
+    widget.pathSelected.connect((sender: QuickOpenWidget, path: string) => {
+      app.shell.collapseLeft();
+      docManager.openOrReveal(PathExt.normalize(path));
+    });
+
+    // Listen for setting changes and apply them to the widget
+    widget.settings = settings.composite;
+    settings.changed.connect((settings: ISettingRegistry.ISettings) => {
+      widget.settings = settings.composite;
+    })
+
+    // Add a command to activate the quickopen sidebar so that the user can
+    // find it in the command palette, assign a hotkey, etc.
+    const command: string = 'quickopen:activate';
+    app.commands.addCommand(command, {
+      label: 'Quick Open',
+      execute: () => {
+        app.shell.activateById(widget.id);
+      }
+    });
+    palette.addItem({command, category: 'File Operations'});
+
+    // Add the quickopen widget as a left sidebar
+    app.shell.addToLeftArea(widget, { rank: 1000 });
+  }
+};
+
+export default extension;

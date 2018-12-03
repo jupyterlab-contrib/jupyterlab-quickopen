@@ -1,0 +1,97 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+doc/_build
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+cover/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+cover/
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Rope
+.ropeproject
+
+# Django stuff:
+*.log
+*.pot
+
+# Sphinx documentation
+docs/_build/
+
+#mac
+.DS_Store
+*~
+
+#pycharm
+.idea/*
+
+#Dolphin browser files
+.directory/
+.directory
+
+#Binary data files
+*.volume
+*.am
+*.tiff
+*.tif
+*.dat
+*.DAT
+
+#generated documntation files
+generated/
+
+#ipython notebook
+.ipynb_checkpoints/
+
+#vim
+*.swp
+
+#data files
+*.zip
+*.jpg
+
+# ctags
+.tags*
+
+# VSCode
+.vscode/
+
+# Node
+node_modules/

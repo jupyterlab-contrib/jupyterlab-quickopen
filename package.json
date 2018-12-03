@@ -1,0 +1,50 @@
+{
+  "name": "@parente/jupyterlab-quickopen",
+  "version": "0.1.0",
+  "description": "Quickly open a file in JupyterLab by part of its name",
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab-extension"
+  ],
+  "homepage": "https://github.com/parente/jupyterlab-quickopen",
+  "bugs": {
+    "url": "https://github.com/parente/jupyterlab-quickopen/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Peter Parente",
+  "files": [
+    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
+    "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}",
+    "schema/*.json"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/parente/jupyterlab-quickopen.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf lib",
+    "prepare": "npm run clean && npm run build",
+    "watch": "tsc -w"
+  },
+  "dependencies": {
+    "@jupyterlab/application": "^0.19.1",
+    "@jupyterlab/apputils": "^0.19.1",
+    "@jupyterlab/coreutils": "^2.2.1",
+    "@jupyterlab/docmanager": "^0.19.1",
+    "@jupyterlab/services": "^3.2.1",
+    "@phosphor/messaging": "^1.2.2",
+    "@phosphor/widgets": "^1.6.0"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.1",
+    "typescript": "~3.1.1"
+  },
+  "jupyterlab": {
+    "extension": true,
+    "schemaDir": "schema"
+  }
+}

@@ -1,0 +1,3 @@
+include versioneer.py
+include jupyterlab_quickopen/_version.py
+recursive-include config *.json

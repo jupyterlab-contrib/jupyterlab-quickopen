@@ -1,0 +1,17 @@
+{
+    "jupyter.lab.setting-icon-class": "jp-FaIcon fa fa-search",
+    "jupyter.lab.setting-icon-label": "Quick Open",
+    "title": "Quick Open",
+    "description": "Quick open panel settings",
+    "properties": {
+      "excludes": {
+        "title": "Exclude Patterns",
+        "description": "File and directory patterns to exclude from the list",
+        "type": "array",
+        "items": { "type": "string" },
+        "default": ["node_modules", "__pycache__"]
+      }
+    },
+    "additionalProperties": false,
+    "type": "object"
+  }
