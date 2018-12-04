@@ -1,7 +1,7 @@
 SHELL:=bash
 PKG_SLUG:=jupyterlab-quickopen
 PKG_NAME:=jupyterlab_quickopen
-CONDA_ENV:=jupyterlab-ext2
+CONDA_ENV:=jupyterlab-quickopen
 
 help:
 # http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
@@ -28,8 +28,10 @@ conda-env: ## Make a conda development environment
 		jupyter serverextension enable $(PKG_NAME)
 
 release: ## Make a release on PyPI and npmjs.org
-	python setup.py sdist register upload
-	npm publish --access=public
+	source activate $(PKG_SLUG) && \
+		python setup.py sdist && \
+		twine upload dist/*.tar.gz
+	source activate $(PKG_SLUG) && npm publish --access=public
 
 watch-lab: ## Make a JupyterLab build process watch for extension builds
 	source activate $(PKG_SLUG) && jupyter lab --watch
