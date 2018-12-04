@@ -23,7 +23,7 @@ pip install jupyterlab-quickopen
 Then install the JupyterLab frontend extension.
 
 ```
-jlpm install @parente/jupyterlab-quickopen
+jupyter labextension install @parente/jupyterlab-quickopen
 ```
 
 ### Install Alternatives
