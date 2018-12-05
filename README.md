@@ -99,3 +99,9 @@ Keep an eye on the terminal running `watch-src` for TypeScript build errors.
 Keep an eye on the terminal running `watch-lab` to know when to refresh your
 browser. Quit and re-run the `make watch-lab` command any time you make
 changes to the **server** extension.
+
+## FAQ
+
+*Does this belong in JupyterLab?*
+
+Maybe. To start, I wanted to do some hacking and it's easiest to do that in a small, independent repo. Putting this feature into JupyterLab-proper requires making the server-side portion work with `ContentManagers` that are not based on the local filesystem. That change might require a new `ContentManager` API since walking the file hierarchy via HTTP calls is pretty heavyweight. Python/TypeScript tests are also required.
