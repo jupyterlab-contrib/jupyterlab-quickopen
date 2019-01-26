@@ -8,6 +8,7 @@ Quickly open a file in JupyterLab by typing part of its name
 
 ## Compatibility
 
+* Python >=3.6.x
 * JupyterLab 0.35.x
 * Jupyter Notebook >=5.2.x
 * Notebook server configurations where notebook documents and other files reside
