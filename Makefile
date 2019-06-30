@@ -9,9 +9,7 @@ help:
 clean: ## Make a clean source tree
 	-find . -name '*.pyc' -exec rm -fv {} \;
 	rm -rf $(PKG_NAME)/__pycache__ __pycache__
-	rm -rf *.egg-info
-	rm -rf node_modules
-	rm -rf lib
+	rm -rf *.egg-info node_modules/ lib/ dist/
 
 pipenv: ## Make a pipenv development environment
 	pipenv --python 3.7
@@ -27,7 +25,9 @@ build: ## Make an install of the frontend and server extensions
 	jupyter serverextension enable $(PKG_NAME)
 
 release: ## Make a release on PyPI and npmjs.org
+	rm -rf dist/
 	python setup.py sdist
+	ls -l dist/
 	twine upload dist/*.tar.gz
 	npm publish --access=public
 
