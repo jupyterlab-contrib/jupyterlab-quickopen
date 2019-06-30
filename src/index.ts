@@ -1,39 +1,37 @@
-import {
-  JupyterLab, JupyterLabPlugin
-} from '@jupyterlab/application';
-import { ICommandPalette } from '@jupyterlab/apputils';
-import { ISettingRegistry, URLExt, PathExt } from '@jupyterlab/coreutils';
-import { IDocumentManager } from '@jupyterlab/docmanager';
-import { ServerConnection } from '@jupyterlab/services';
-import { CommandRegistry } from '@phosphor/commands';
-import { JSONObject } from '@phosphor/coreutils';
-import { Message } from '@phosphor/messaging';
-import { ISignal, Signal } from '@phosphor/signaling';
-import { CommandPalette } from '@phosphor/widgets';
+import { ILabShell, JupyterFrontEnd, JupyterFrontEndPlugin } from "@jupyterlab/application";
+import { ICommandPalette } from "@jupyterlab/apputils";
+import { ISettingRegistry, URLExt, PathExt } from "@jupyterlab/coreutils";
+import { IDocumentManager } from "@jupyterlab/docmanager";
+import { ServerConnection } from "@jupyterlab/services";
+import { CommandRegistry } from "@phosphor/commands";
+import { ReadonlyJSONObject } from "@phosphor/coreutils";
+import { Message } from "@phosphor/messaging";
+import { ISignal, Signal } from "@phosphor/signaling";
+import { CommandPalette } from "@phosphor/widgets";
 import "../style/index.css";
 
 /** Structure of the JSON response from the server */
 interface QuickOpenResponse {
-  readonly contents: { [key: string]: string[] },
-  readonly scanSeconds: number,
+  readonly contents: { [key: string]: string[] };
+  readonly scanSeconds: number;
 }
-
 
 /** Makes a HTTP request for the server-side quick open scan */
 async function fetchContents(excludes: string[]): Promise<QuickOpenResponse> {
-  const query = excludes.map(exclude => {
-    return 'excludes='+encodeURIComponent(exclude);
-  }).join('&');
+  const query = excludes
+    .map(exclude => {
+      return "excludes=" + encodeURIComponent(exclude);
+    })
+    .join("&");
 
   const settings = ServerConnection.makeSettings();
-  const fullUrl = URLExt.join(settings.baseUrl, '/api/quickopen') + '?' + query;
-  const response = await ServerConnection.makeRequest(fullUrl, {method: 'GET'}, settings);
+  const fullUrl = URLExt.join(settings.baseUrl, "/api/quickopen") + "?" + query;
+  const response = await ServerConnection.makeRequest(fullUrl, { method: "GET" }, settings);
   if (response.status !== 200) {
     throw new ServerConnection.ResponseError(response);
   }
   return await response.json();
 }
-
 
 /**
  * Shows files nested under directories in the root notebooks directory
@@ -41,14 +39,14 @@ async function fetchContents(excludes: string[]): Promise<QuickOpenResponse> {
  */
 class QuickOpenWidget extends CommandPalette {
   private _pathSelected = new Signal<this, string>(this);
-  private _settings: JSONObject;
+  private _settings: ReadonlyJSONObject;
 
   constructor(options: CommandPalette.IOptions) {
     super(options);
 
-    this.id = 'jupyterlab-quickopen';
-    this.title.iconClass = 'jp-SideBar-tabIcon jp-FaIcon fa fa-search';
-    this.title.caption = 'Quick Open';
+    this.id = "jupyterlab-quickopen";
+    this.title.iconClass = "jp-SideBar-tabIcon jp-SearchIcon";
+    this.title.caption = "Quick Open";
   }
 
   /** Signal when a selected path is activated. */
@@ -57,7 +55,7 @@ class QuickOpenWidget extends CommandPalette {
   }
 
   /** Current extension settings */
-  set settings(settings: JSONObject) {
+  set settings(settings: ReadonlyJSONObject) {
     this._settings = settings;
   }
 
@@ -73,11 +71,11 @@ class QuickOpenWidget extends CommandPalette {
     // Remove all paths from the view
     this.clearItems();
 
-    for(let category in response.contents) {
-      for(let fn of response.contents[category]) {
+    for (let category in response.contents) {
+      for (let fn of response.contents[category]) {
         // Creates commands that are relative file paths on the server
         let command = `${category}/${fn}`;
-        if(!this.commands.hasCommand(command)) {
+        if (!this.commands.hasCommand(command)) {
           // Only add the command to the registry if it does not yet exist
           // TODO: Track disposables and remove
           this.commands.addCommand(command, {
@@ -93,24 +91,23 @@ class QuickOpenWidget extends CommandPalette {
       }
     }
   }
-
 }
-
 
 /**
  * Initialization data for the jupyterlab-quickopen extension.
  */
-const extension: JupyterLabPlugin<void> = {
-  id: '@parente/jupyterlab-quickopen:plugin',
+const extension: JupyterFrontEndPlugin<void> = {
+  id: "@parente/jupyterlab-quickopen:plugin",
   autoStart: true,
-  requires: [ICommandPalette, IDocumentManager, ISettingRegistry],
+  requires: [ICommandPalette, IDocumentManager, ILabShell, ISettingRegistry],
   activate: async (
-    app: JupyterLab,
+    app: JupyterFrontEnd,
     palette: ICommandPalette,
     docManager: IDocumentManager,
-    settingRegistry: ISettingRegistry) => {
-
-    window['docManager'] = docManager;
+    labShell: ILabShell,
+    settingRegistry: ISettingRegistry
+  ) => {
+    window["docManager"] = docManager;
 
     console.log(`Activated extension: ${extension.id}`);
     const commands: CommandRegistry = new CommandRegistry();
@@ -120,7 +117,7 @@ const extension: JupyterLabPlugin<void> = {
     // Listen for path selection signals and show the selected files in the
     // appropriate editor/viewer
     widget.pathSelected.connect((sender: QuickOpenWidget, path: string) => {
-      app.shell.collapseLeft();
+      labShell.collapseLeft();
       docManager.openOrReveal(PathExt.normalize(path));
     });
 
@@ -128,21 +125,21 @@ const extension: JupyterLabPlugin<void> = {
     widget.settings = settings.composite;
     settings.changed.connect((settings: ISettingRegistry.ISettings) => {
       widget.settings = settings.composite;
-    })
+    });
 
     // Add a command to activate the quickopen sidebar so that the user can
     // find it in the command palette, assign a hotkey, etc.
-    const command: string = 'quickopen:activate';
+    const command: string = "quickopen:activate";
     app.commands.addCommand(command, {
-      label: 'Quick Open',
+      label: "Quick Open",
       execute: () => {
-        app.shell.activateById(widget.id);
+        labShell.activateById(widget.id);
       }
     });
-    palette.addItem({command, category: 'File Operations'});
+    palette.addItem({ command, category: "File Operations" });
 
     // Add the quickopen widget as a left sidebar
-    app.shell.addToLeftArea(widget, { rank: 1000 });
+    labShell.add(widget, "left", { rank: 1000 });
   }
 };
 

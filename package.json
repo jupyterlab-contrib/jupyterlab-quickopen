@@ -1,6 +1,6 @@
 {
   "name": "@parente/jupyterlab-quickopen",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Quickly open a file in JupyterLab by part of its name",
   "keywords": [
     "jupyter",
@@ -31,17 +31,17 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@jupyterlab/application": "^0.19.1",
-    "@jupyterlab/apputils": "^0.19.1",
-    "@jupyterlab/coreutils": "^2.2.1",
-    "@jupyterlab/docmanager": "^0.19.1",
-    "@jupyterlab/services": "^3.2.1",
-    "@phosphor/messaging": "^1.2.2",
-    "@phosphor/widgets": "^1.6.0"
+    "@jupyterlab/application": "^1.0.0",
+    "@jupyterlab/apputils": "^1.0.0",
+    "@jupyterlab/coreutils": "^3.0.0",
+    "@jupyterlab/docmanager": "^1.0.0",
+    "@jupyterlab/services": "^4.0.0",
+    "@phosphor/messaging": "^1.2.3",
+    "@phosphor/widgets": "^1.8.1"
   },
   "devDependencies": {
     "rimraf": "^2.6.1",
-    "typescript": "~3.1.1"
+    "typescript": "~3.5.2"
   },
   "jupyterlab": {
     "extension": true,
