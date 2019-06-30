@@ -1,7 +1,6 @@
 SHELL:=bash
 PKG_SLUG:=jupyterlab-quickopen
 PKG_NAME:=jupyterlab_quickopen
-CONDA_ENV:=jupyterlab-quickopen
 
 help:
 # http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
@@ -10,31 +9,30 @@ help:
 clean: ## Make a clean source tree
 	-find . -name '*.pyc' -exec rm -fv {} \;
 	rm -rf $(PKG_NAME)/__pycache__ __pycache__
-	rm -rf *.egg-info
-	rm -rf node_modules
-	rm -rf lib
+	rm -rf *.egg-info node_modules/ lib/ dist/
 
-activate: ## Make a conda activation command for eval
-	@echo "source activate $(PKG_SLUG)"
+pipenv: ## Make a pipenv development environment
+	pipenv --python 3.7
+	PIPENV_VENV_IN_PROJECT=true pipenv sync --dev
 
-conda-env: ## Make a conda development environment
-	conda create -n $(PKG_SLUG) -c conda-forge python=3 \
-		--file requirements.txt --file requirements-dev.txt
-	source activate $(PKG_SLUG) && \
-		jlpm install && \
-		jupyter labextension install . --no-build
-	source activate $(PKG_SLUG) && \
-		pip install -e . && \
-		jupyter serverextension enable $(PKG_NAME)
+shell: ## Make a pipenv shell
+	pipenv shell
+
+build: ## Make an install of the frontend and server extensions
+	jlpm install
+	jupyter labextension install . --no-build
+	pip install -e .
+	jupyter serverextension enable $(PKG_NAME)
 
 release: ## Make a release on PyPI and npmjs.org
-	source activate $(PKG_SLUG) && \
-		python setup.py sdist && \
-		twine upload dist/*.tar.gz
-	source activate $(PKG_SLUG) && npm publish --access=public
+	rm -rf dist/
+	python setup.py sdist
+	ls -l dist/
+	twine upload dist/*.tar.gz
+	npm publish --access=public
 
 watch-lab: ## Make a JupyterLab build process watch for extension builds
-	source activate $(PKG_SLUG) && jupyter lab --watch
+	jupyter lab --watch
 
 watch-src: ## Make a TypeScript build process watch for source changes
-	source activate $(PKG_SLUG) && jlpm run watch
+	jlpm run watch

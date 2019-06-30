@@ -95,3 +95,6 @@ generated/
 
 # Node
 node_modules/
+
+# Pipenv
+.venv/

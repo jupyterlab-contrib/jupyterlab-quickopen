@@ -1,5 +1,3 @@
-.jp-FaIcon {
-    font-size: 20px;
-    color: #777;
-    margin: auto;
+.jp-SearchIcon {
+  background-image: var(--jp-icon-search);
 }
