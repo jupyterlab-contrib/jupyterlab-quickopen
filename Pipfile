@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+coverage = "*"
+flake8 = "*"
+pytest = "*"
+twine = "*"
+
+[packages]
+jupyterlab = ">=1.0,<2.0a"
+notebook = ">=5.2,<6.0a"
+
+[requires]
+python_version = "3.7"
