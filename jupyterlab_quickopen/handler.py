@@ -72,8 +72,13 @@ class QuickOpenHandler(APIHandler):
             contents: File names binned by parent directory
         """
         excludes = set(self.get_arguments('excludes'))
+        current_path = self.get_argument('path')
         start_ts = time.time()
-        contents_by_path = self.scan_disk(self.root_dir, excludes)
+        if current_path:
+            full_path = os.path.join(self.root_dir, current_path)
+        else:
+            full_path = self.root_dir
+        contents_by_path = self.scan_disk(full_path, excludes)
         delta_ts = time.time() - start_ts
         self.write(json_encode({
             'scan_seconds': delta_ts,

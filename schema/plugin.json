@@ -10,6 +10,12 @@
       "type": "array",
       "items": { "type": "string" },
       "default": ["node_modules", "__pycache__"]
+    },
+    "relativeSearch": {
+      "title": "Relative Search",
+      "description": "Whether to search from currently selected directory",
+      "type": "boolean",
+      "default": false
     }
   },
   "additionalProperties": false,

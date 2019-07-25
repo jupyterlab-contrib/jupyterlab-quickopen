@@ -3,6 +3,7 @@ import { ICommandPalette } from "@jupyterlab/apputils";
 import { ISettingRegistry, URLExt, PathExt } from "@jupyterlab/coreutils";
 import { IDocumentManager } from "@jupyterlab/docmanager";
 import { ServerConnection } from "@jupyterlab/services";
+import { FileBrowser, IFileBrowserFactory } from '@jupyterlab/filebrowser';
 import { CommandRegistry } from "@phosphor/commands";
 import { ReadonlyJSONObject } from "@phosphor/coreutils";
 import { Message } from "@phosphor/messaging";
@@ -17,7 +18,7 @@ interface QuickOpenResponse {
 }
 
 /** Makes a HTTP request for the server-side quick open scan */
-async function fetchContents(excludes: string[]): Promise<QuickOpenResponse> {
+async function fetchContents(path: string, excludes: string[]): Promise<QuickOpenResponse> {
   const query = excludes
     .map(exclude => {
       return "excludes=" + encodeURIComponent(exclude);
@@ -25,7 +26,7 @@ async function fetchContents(excludes: string[]): Promise<QuickOpenResponse> {
     .join("&");
 
   const settings = ServerConnection.makeSettings();
-  const fullUrl = URLExt.join(settings.baseUrl, "/api/quickopen") + "?" + query;
+  const fullUrl = URLExt.join(settings.baseUrl, "/api/quickopen") + "?" + query + "&path=" + path;
   const response = await ServerConnection.makeRequest(fullUrl, { method: "GET" }, settings);
   if (response.status !== 200) {
     throw new ServerConnection.ResponseError(response);
@@ -40,13 +41,16 @@ async function fetchContents(excludes: string[]): Promise<QuickOpenResponse> {
 class QuickOpenWidget extends CommandPalette {
   private _pathSelected = new Signal<this, string>(this);
   private _settings: ReadonlyJSONObject;
+  private _fileBrowser: FileBrowser;
 
-  constructor(options: CommandPalette.IOptions) {
+  constructor(factory: IFileBrowserFactory, options: CommandPalette.IOptions) {
     super(options);
 
     this.id = "jupyterlab-quickopen";
     this.title.iconClass = "jp-SideBar-tabIcon jp-SearchIcon";
     this.title.caption = "Quick Open";
+
+    this._fileBrowser = factory.defaultBrowser;
   }
 
   /** Signal when a selected path is activated. */
@@ -66,7 +70,8 @@ class QuickOpenWidget extends CommandPalette {
     super.onActivateRequest(msg);
 
     // Fetch the current contents from the server
-    let response = await fetchContents(<string[]>this._settings.excludes);
+    let path = this._settings.relativeSearch ? this._fileBrowser.model.path : "";
+    let response = await fetchContents(path, <string[]>this._settings.excludes);
 
     // Remove all paths from the view
     this.clearItems();
@@ -99,19 +104,20 @@ class QuickOpenWidget extends CommandPalette {
 const extension: JupyterFrontEndPlugin<void> = {
   id: "@parente/jupyterlab-quickopen:plugin",
   autoStart: true,
-  requires: [ICommandPalette, IDocumentManager, ILabShell, ISettingRegistry],
+  requires: [ICommandPalette, IDocumentManager, ILabShell, ISettingRegistry, IFileBrowserFactory],
   activate: async (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
     docManager: IDocumentManager,
     labShell: ILabShell,
-    settingRegistry: ISettingRegistry
+    settingRegistry: ISettingRegistry,
+    fileBrowserFactory: IFileBrowserFactory
   ) => {
     window["docManager"] = docManager;
 
     console.log(`Activated extension: ${extension.id}`);
     const commands: CommandRegistry = new CommandRegistry();
-    const widget: QuickOpenWidget = new QuickOpenWidget({ commands });
+    const widget: QuickOpenWidget = new QuickOpenWidget(fileBrowserFactory, { commands });
     const settings: ISettingRegistry.ISettings = await settingRegistry.load(extension.id);
 
     // Listen for path selection signals and show the selected files in the
