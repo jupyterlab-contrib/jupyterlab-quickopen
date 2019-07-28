@@ -137,7 +137,7 @@
     path-posix "~1.0.0"
     url-parse "~1.4.3"
 
-"@jupyterlab/docmanager@^1.0.0":
+"@jupyterlab/docmanager@^1.0.0", "@jupyterlab/docmanager@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@jupyterlab/docmanager/-/docmanager-1.0.2.tgz#02e27c8f0d5ef1597d9cd144679037c83ee07a35"
   integrity sha512-Nc4v7Xn7eUjJpU0Vw/ezvGyKkvbXuEfL1go7QW9UFX4HfcEfelXIaT69EzoTYW6mVCZp2Z1UTYXM9YnaMHkQMg==
@@ -175,6 +175,27 @@
     "@phosphor/messaging" "^1.2.3"
     "@phosphor/signaling" "^1.2.3"
     "@phosphor/widgets" "^1.8.0"
+
+"@jupyterlab/filebrowser@^1.0.1":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@jupyterlab/filebrowser/-/filebrowser-1.0.3.tgz#9fe887372d4f0488fadd30fa18ea6e00096758fb"
+  integrity sha512-i55vRjA8NZzRy/IHJrtYh6xjOnHj62xEhHp7OU/FqYjvyQ5B1wXQpTag8nkpxLKKQzuCLxqLO8Q+RZ273LS2mA==
+  dependencies:
+    "@jupyterlab/apputils" "^1.0.2"
+    "@jupyterlab/coreutils" "^3.0.0"
+    "@jupyterlab/docmanager" "^1.0.2"
+    "@jupyterlab/docregistry" "^1.0.2"
+    "@jupyterlab/services" "^4.0.2"
+    "@jupyterlab/statusbar" "^1.0.2"
+    "@phosphor/algorithm" "^1.1.3"
+    "@phosphor/coreutils" "^1.3.1"
+    "@phosphor/disposable" "^1.2.0"
+    "@phosphor/domutils" "^1.1.3"
+    "@phosphor/dragdrop" "^1.3.3"
+    "@phosphor/messaging" "^1.2.3"
+    "@phosphor/signaling" "^1.2.3"
+    "@phosphor/widgets" "^1.8.0"
+    react "~16.8.4"
 
 "@jupyterlab/observables@^2.2.0":
   version "2.2.0"
