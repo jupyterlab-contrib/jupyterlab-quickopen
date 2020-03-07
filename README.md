@@ -108,6 +108,22 @@ Keep an eye on the terminal running `watch-src` for TypeScript build errors. Kee
 terminal running `watch-lab` to know when to refresh your browser. Quit and re-run the
 `make watch-lab` command any time you make changes to the **server** extension.
 
+## Release
+
+Make a commit with version number bumps in `package.json` and `pyproject.toml`. Then do the
+following.
+
+```
+# Tag the release commit
+git tag -a -m "0.4.0" 0.4.0
+
+# Activate the dev environment
+make shell
+
+# Build and push releases to pypi and npmjs
+make release
+```
+
 ## FAQ
 
 _Does this belong in JupyterLab?_
