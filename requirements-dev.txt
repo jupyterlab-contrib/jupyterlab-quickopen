@@ -1,5 +1,0 @@
-coverage
-flake8
-nodejs
-pytest
-twine
