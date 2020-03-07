@@ -16,6 +16,8 @@ flake8 = "*"
 pytest = "*"
 twine = "*"
 
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+# Use the default setuptools build system until poetry supports data files
+# https://github.com/python-poetry/poetry/issues/890
+# [build-system]
+# requires = ["poetry>=0.12"]
+# build-backend = "poetry.masonry.api"
