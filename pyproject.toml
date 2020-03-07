@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jupyterlab-quickopen"
-version = "0.3.0"
+version = "0.4.0"
 description = "Quickly open a file in JupyterLab by typing part of its name"
 authors = ["Peter Parente <parente@gmail.com>"]
 
