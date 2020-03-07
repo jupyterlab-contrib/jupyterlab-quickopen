@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "jupyterlab-quickopen"
+version = "0.3.0"
+description = "Quickly open a file in JupyterLab by typing part of its name"
+authors = ["Peter Parente <parente@gmail.com>"]
+
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+jupyterlab = ">=1.0,<2.0a"
+notebook = ">=6.0,<7.0a"
+
+[tool.poetry.dev-dependencies]
+coverage = "*"
+flake8 = "*"
+pytest = "*"
+twine = "*"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

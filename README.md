@@ -8,9 +8,9 @@ Quickly open a file in JupyterLab by typing part of its name
 
 ## Compatibility
 
-- Python >=3.6.x
+- Python >=3.7.x
 - JupyterLab >=1.0,<2.0
-- Jupyter Notebook >=5.2,<6.0
+- Jupyter Notebook >=6.0,<7.0
 - Notebook server configurations where notebook documents and other files reside on the local
   filesystem (which is the the notebook server default)
 
@@ -82,12 +82,12 @@ area to override the default values.
 
 ## Develop
 
-The project includes a Makefile which makes setting up a development environment using `pipenv`
+The project includes a Makefile which makes setting up a development environment using `poetry`
 easy. You must also install the latest Node LTS release as a prerequisite.
 
 ```
 # Create a dev environment
-make pipenv
+make venv
 
 # Activate the dev environment
 make shell

@@ -11,12 +11,14 @@ clean: ## Make a clean source tree
 	rm -rf $(PKG_NAME)/__pycache__ __pycache__
 	rm -rf *.egg-info node_modules/ lib/ dist/
 
-pipenv: ## Make a pipenv development environment
-	pipenv --python 3.7
-	PIPENV_VENV_IN_PROJECT=true pipenv sync --dev
+poetry: ## Make a local poetry install
+	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
 
-shell: ## Make a pipenv shell
-	pipenv shell
+venv: ## Make a virtual env with poetry
+	poetry install
+
+shell: ## Make a shell in the venv with poetry
+	poetry shell
 
 build: ## Make an install of the frontend and server extensions
 	jlpm install
