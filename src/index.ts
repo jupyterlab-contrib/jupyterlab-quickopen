@@ -1,14 +1,15 @@
 import { ILabShell, JupyterFrontEnd, JupyterFrontEndPlugin } from "@jupyterlab/application";
 import { ICommandPalette } from "@jupyterlab/apputils";
-import { ISettingRegistry, URLExt, PathExt } from "@jupyterlab/coreutils";
+import { URLExt, PathExt } from "@jupyterlab/coreutils";
 import { IDocumentManager } from "@jupyterlab/docmanager";
 import { ServerConnection } from "@jupyterlab/services";
+import { ISettingRegistry } from "@jupyterlab/settingregistry";
 import { FileBrowser, IFileBrowserFactory } from '@jupyterlab/filebrowser';
-import { CommandRegistry } from "@phosphor/commands";
-import { ReadonlyJSONObject } from "@phosphor/coreutils";
-import { Message } from "@phosphor/messaging";
-import { ISignal, Signal } from "@phosphor/signaling";
-import { CommandPalette } from "@phosphor/widgets";
+import { CommandRegistry } from "@lumino/commands";
+import { ReadonlyJSONObject } from "@lumino/coreutils";
+import { Message } from "@lumino/messaging";
+import { ISignal, Signal } from "@lumino/signaling";
+import { CommandPalette } from "@lumino/widgets";
 import "../style/index.css";
 
 /** Structure of the JSON response from the server */
