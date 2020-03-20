@@ -86,6 +86,12 @@ The project includes a Makefile which makes setting up a development environment
 easy. You must also install the latest Node LTS release as a prerequisite.
 
 ```
+# Install poetry
+make poetry
+
+# Refresh the poetry.lock file if upgrading jupyterlab in pyproject.toml
+poetry lock
+
 # Create a dev environment
 make venv
 
@@ -101,6 +107,7 @@ make watch-src
 
 # In a second terminal, watch for rebuilt extension packages and rebuild
 # jupyterlab to include them
+make shell
 make watch-lab
 ```
 
