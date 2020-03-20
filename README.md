@@ -9,7 +9,7 @@ Quickly open a file in JupyterLab by typing part of its name
 ## Compatibility
 
 - Python >=3.7.x
-- JupyterLab >=1.0,<2.0
+- JupyterLab >=2.0,<3.0
 - Jupyter Notebook >=6.0,<7.0
 - Notebook server configurations where notebook documents and other files reside on the local
   filesystem (which is the the notebook server default)
@@ -86,6 +86,12 @@ The project includes a Makefile which makes setting up a development environment
 easy. You must also install the latest Node LTS release as a prerequisite.
 
 ```
+# Install poetry
+make poetry
+
+# Refresh the poetry.lock file if upgrading jupyterlab in pyproject.toml
+poetry lock
+
 # Create a dev environment
 make venv
 
@@ -101,6 +107,7 @@ make watch-src
 
 # In a second terminal, watch for rebuilt extension packages and rebuild
 # jupyterlab to include them
+make shell
 make watch-lab
 ```
 
