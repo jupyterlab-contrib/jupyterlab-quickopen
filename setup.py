@@ -5,19 +5,22 @@ import json
 import os
 
 from jupyter_packaging import (
-    create_cmdclass, install_npm, ensure_targets,
-    combine_commands, skip_if_exists
+    create_cmdclass,
+    install_npm,
+    ensure_targets,
+    combine_commands,
+    skip_if_exists,
 )
 import setuptools
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 # The name of the project
-name="jupyterlab-quickopen"
+name = "jupyterlab_quickopen"
 
 # Get our version
-with open(os.path.join(HERE, 'package.json')) as f:
-    version = json.load(f)['version']
+with open(os.path.join(HERE, "package.json")) as f:
+    version = json.load(f)["version"]
 
 lab_path = os.path.join(HERE, name, "labextension")
 
@@ -26,24 +29,22 @@ jstargets = [
     os.path.join(lab_path, "package.json"),
 ]
 
-package_data_spec = {
-    name: [
-        "*"
-    ]
-}
+package_data_spec = {name: ["*"]}
 
 labext_name = "@parente/jupyterlab-quickopen"
 
 data_files_spec = [
     ("share/jupyter/labextensions/%s" % labext_name, lab_path, "**"),
-    ("share/jupyter/labextensions/%s" % labext_name, HERE, "install.json"),("etc/jupyter/jupyter_server_config.d",
-     "jupyter-config", "jupyterlab-quickopen.json"),
-     
+    ("share/jupyter/labextensions/%s" % labext_name, HERE, "install.json"),
+    (
+        "etc/jupyter/jupyter_server_config.d",
+        "jupyter-config",
+        "jupyterlab-quickopen.json",
+    ),
 ]
 
-cmdclass = create_cmdclass("jsdeps",
-    package_data_spec=package_data_spec,
-    data_files_spec=data_files_spec
+cmdclass = create_cmdclass(
+    "jsdeps", package_data_spec=package_data_spec, data_files_spec=data_files_spec
 )
 
 js_command = combine_commands(
@@ -66,9 +67,9 @@ setup_args = dict(
     url="https://github.com/parente/jupyterlab-quickopen",
     author="Peter Parente",
     description="Quickly open a file in JupyterLab by part of its name",
-    long_description= long_description,
+    long_description=long_description,
     long_description_content_type="text/markdown",
-    cmdclass= cmdclass,
+    cmdclass=cmdclass,
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyterlab>=3.0.0rc13,==3.*",

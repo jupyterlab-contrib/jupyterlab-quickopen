@@ -11,30 +11,26 @@ clean: ## Make a clean source tree
 	rm -rf $(PKG_NAME)/__pycache__ __pycache__
 	rm -rf *.egg-info node_modules/ lib/ dist/
 
-poetry: ## Make a local poetry install
-	curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+venv: ## Make a development virtual env
+	python3 -m venv .venv
+	source ./.venv/bin/activate \
+		&& pip install -r requirements-dev.txt\
+		&& pip install -e . \
+		&& jupyter labextension develop . --overwrite
 
-venv: ## Make a virtual env with poetry
-	poetry install
-
-shell: ## Make a shell in the venv with poetry
-	poetry shell
+shell: ## Make a shell in the venv
+	@echo "source ./.venv/bin/activate"
 
 build: ## Make an install of the frontend and server extensions
-	jlpm install
-	jupyter labextension install . --no-build
-	pip install -e .
-	jupyter serverextension enable $(PKG_NAME)
+	@jlpm run build
 
 release: ## Make a release on PyPI and npmjs.org
+	# TODO: update
 	rm -rf dist/
 	python setup.py sdist
 	ls -l dist/
 	twine upload dist/*.tar.gz
 	npm publish --access=public
 
-watch-lab: ## Make a JupyterLab build process watch for extension builds
-	jupyter lab --watch
-
-watch-src: ## Make a TypeScript build process watch for source changes
+watch: ## Watch source changes and rebuild
 	jlpm run watch

@@ -13,7 +13,7 @@ class QuickOpenHandler(APIHandler):
     @property
     def contents_manager(self):
         """Currently configured notebook server ContentsManager."""
-        return self.settings['contents_manager']
+        return self.settings["contents_manager"]
 
     @property
     def root_dir(self):
@@ -37,9 +37,12 @@ class QuickOpenHandler(APIHandler):
         bool
         """
         return (
-            any(fnmatch(entry.name, glob) for glob in excludes) or
-            not self.contents_manager.should_list(entry.name) or
-            (self.contents_manager.is_hidden(entry.path) and not self.contents_manager.allow_hidden)
+            any(fnmatch(entry.name, glob) for glob in excludes)
+            or not self.contents_manager.should_list(entry.name)
+            or (
+                self.contents_manager.is_hidden(entry.path)
+                and not self.contents_manager.allow_hidden
+            )
         )
 
     def scan_disk(self, path, excludes, on_disk=None):
@@ -71,8 +74,8 @@ class QuickOpenHandler(APIHandler):
             scan_seconds: Time in seconds to collect all file names
             contents: File names binned by parent directory
         """
-        excludes = set(self.get_arguments('excludes'))
-        current_path = self.get_argument('path')
+        excludes = set(self.get_arguments("excludes"))
+        current_path = self.get_argument("path")
         start_ts = time.time()
         if current_path:
             full_path = os.path.join(self.root_dir, current_path)
@@ -80,7 +83,6 @@ class QuickOpenHandler(APIHandler):
             full_path = self.root_dir
         contents_by_path = self.scan_disk(full_path, excludes)
         delta_ts = time.time() - start_ts
-        self.write(json_encode({
-            'scan_seconds': delta_ts,
-            'contents': contents_by_path
-        }))
+        self.write(
+            json_encode({"scan_seconds": delta_ts, "contents": contents_by_path})
+        )

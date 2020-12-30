@@ -1,7 +1,7 @@
 import {
   ILabShell,
   JupyterFrontEnd,
-  JupyterFrontEndPlugin,
+  JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { ICommandPalette } from '@jupyterlab/apputils';
 import { URLExt, PathExt } from '@jupyterlab/coreutils';
@@ -27,14 +27,14 @@ async function fetchContents(
   excludes: string[]
 ): Promise<QuickOpenResponse> {
   const query = excludes
-    .map((exclude) => {
+    .map(exclude => {
       return 'excludes=' + encodeURIComponent(exclude);
     })
     .join('&');
 
   const settings = ServerConnection.makeSettings();
   const fullUrl =
-    URLExt.join(settings.baseUrl, '/api/quickopen') +
+    URLExt.join(settings.baseUrl, 'jupyterlab-quickopen', 'api', 'files') +
     '?' +
     query +
     '&path=' +
@@ -106,7 +106,7 @@ class QuickOpenWidget extends CommandPalette {
             execute: () => {
               // Emit a selection signal
               this._pathSelected.emit(command);
-            },
+            }
           });
         }
         // Make the file visible under its parent directory heading
@@ -127,7 +127,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     IDocumentManager,
     ILabShell,
     ISettingRegistry,
-    IFileBrowserFactory,
+    IFileBrowserFactory
   ],
   activate: async (
     app: JupyterFrontEnd,
@@ -137,12 +137,10 @@ const extension: JupyterFrontEndPlugin<void> = {
     settingRegistry: ISettingRegistry,
     fileBrowserFactory: IFileBrowserFactory
   ) => {
-    window['docManager'] = docManager;
-
     console.log(`Activated extension: ${extension.id}`);
     const commands: CommandRegistry = new CommandRegistry();
     const widget: QuickOpenWidget = new QuickOpenWidget(fileBrowserFactory, {
-      commands,
+      commands
     });
     const settings: ISettingRegistry.ISettings = await settingRegistry.load(
       extension.id
@@ -168,13 +166,13 @@ const extension: JupyterFrontEndPlugin<void> = {
       label: 'Quick Open',
       execute: () => {
         labShell.activateById(widget.id);
-      },
+      }
     });
     palette.addItem({ command, category: 'File Operations' });
 
     // Add the quickopen widget as a left sidebar
     labShell.add(widget, 'left', { rank: 1000 });
-  },
+  }
 };
 
 export default extension;
