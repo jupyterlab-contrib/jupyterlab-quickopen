@@ -1,16 +1,19 @@
-import { ILabShell, JupyterFrontEnd, JupyterFrontEndPlugin } from "@jupyterlab/application";
-import { ICommandPalette } from "@jupyterlab/apputils";
-import { URLExt, PathExt } from "@jupyterlab/coreutils";
-import { IDocumentManager } from "@jupyterlab/docmanager";
-import { ServerConnection } from "@jupyterlab/services";
-import { ISettingRegistry } from "@jupyterlab/settingregistry";
+import {
+  ILabShell,
+  JupyterFrontEnd,
+  JupyterFrontEndPlugin,
+} from '@jupyterlab/application';
+import { ICommandPalette } from '@jupyterlab/apputils';
+import { URLExt, PathExt } from '@jupyterlab/coreutils';
+import { IDocumentManager } from '@jupyterlab/docmanager';
+import { ServerConnection } from '@jupyterlab/services';
+import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { FileBrowser, IFileBrowserFactory } from '@jupyterlab/filebrowser';
-import { CommandRegistry } from "@lumino/commands";
-import { ReadonlyJSONObject } from "@lumino/coreutils";
-import { Message } from "@lumino/messaging";
-import { ISignal, Signal } from "@lumino/signaling";
-import { CommandPalette } from "@lumino/widgets";
-import "../style/index.css";
+import { CommandRegistry } from '@lumino/commands';
+import { ReadonlyJSONObject } from '@lumino/coreutils';
+import { Message } from '@lumino/messaging';
+import { ISignal, Signal } from '@lumino/signaling';
+import { CommandPalette } from '@lumino/widgets';
 
 /** Structure of the JSON response from the server */
 interface QuickOpenResponse {
@@ -19,16 +22,28 @@ interface QuickOpenResponse {
 }
 
 /** Makes a HTTP request for the server-side quick open scan */
-async function fetchContents(path: string, excludes: string[]): Promise<QuickOpenResponse> {
+async function fetchContents(
+  path: string,
+  excludes: string[]
+): Promise<QuickOpenResponse> {
   const query = excludes
-    .map(exclude => {
-      return "excludes=" + encodeURIComponent(exclude);
+    .map((exclude) => {
+      return 'excludes=' + encodeURIComponent(exclude);
     })
-    .join("&");
+    .join('&');
 
   const settings = ServerConnection.makeSettings();
-  const fullUrl = URLExt.join(settings.baseUrl, "/api/quickopen") + "?" + query + "&path=" + path;
-  const response = await ServerConnection.makeRequest(fullUrl, { method: "GET" }, settings);
+  const fullUrl =
+    URLExt.join(settings.baseUrl, '/api/quickopen') +
+    '?' +
+    query +
+    '&path=' +
+    path;
+  const response = await ServerConnection.makeRequest(
+    fullUrl,
+    { method: 'GET' },
+    settings
+  );
   if (response.status !== 200) {
     throw new ServerConnection.ResponseError(response);
   }
@@ -47,9 +62,9 @@ class QuickOpenWidget extends CommandPalette {
   constructor(factory: IFileBrowserFactory, options: CommandPalette.IOptions) {
     super(options);
 
-    this.id = "jupyterlab-quickopen";
-    this.title.iconClass = "jp-SideBar-tabIcon jp-SearchIcon";
-    this.title.caption = "Quick Open";
+    this.id = 'jupyterlab-quickopen';
+    this.title.iconClass = 'jp-SideBar-tabIcon jp-SearchIcon';
+    this.title.caption = 'Quick Open';
 
     this._fileBrowser = factory.defaultBrowser;
   }
@@ -71,7 +86,9 @@ class QuickOpenWidget extends CommandPalette {
     super.onActivateRequest(msg);
 
     // Fetch the current contents from the server
-    let path = this._settings.relativeSearch ? this._fileBrowser.model.path : "";
+    let path = this._settings.relativeSearch
+      ? this._fileBrowser.model.path
+      : '';
     let response = await fetchContents(path, <string[]>this._settings.excludes);
 
     // Remove all paths from the view
@@ -89,7 +106,7 @@ class QuickOpenWidget extends CommandPalette {
             execute: () => {
               // Emit a selection signal
               this._pathSelected.emit(command);
-            }
+            },
           });
         }
         // Make the file visible under its parent directory heading
@@ -103,9 +120,15 @@ class QuickOpenWidget extends CommandPalette {
  * Initialization data for the jupyterlab-quickopen extension.
  */
 const extension: JupyterFrontEndPlugin<void> = {
-  id: "@parente/jupyterlab-quickopen:plugin",
+  id: '@parente/jupyterlab-quickopen:plugin',
   autoStart: true,
-  requires: [ICommandPalette, IDocumentManager, ILabShell, ISettingRegistry, IFileBrowserFactory],
+  requires: [
+    ICommandPalette,
+    IDocumentManager,
+    ILabShell,
+    ISettingRegistry,
+    IFileBrowserFactory,
+  ],
   activate: async (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
@@ -114,12 +137,16 @@ const extension: JupyterFrontEndPlugin<void> = {
     settingRegistry: ISettingRegistry,
     fileBrowserFactory: IFileBrowserFactory
   ) => {
-    window["docManager"] = docManager;
+    window['docManager'] = docManager;
 
     console.log(`Activated extension: ${extension.id}`);
     const commands: CommandRegistry = new CommandRegistry();
-    const widget: QuickOpenWidget = new QuickOpenWidget(fileBrowserFactory, { commands });
-    const settings: ISettingRegistry.ISettings = await settingRegistry.load(extension.id);
+    const widget: QuickOpenWidget = new QuickOpenWidget(fileBrowserFactory, {
+      commands,
+    });
+    const settings: ISettingRegistry.ISettings = await settingRegistry.load(
+      extension.id
+    );
 
     // Listen for path selection signals and show the selected files in the
     // appropriate editor/viewer
@@ -136,18 +163,18 @@ const extension: JupyterFrontEndPlugin<void> = {
 
     // Add a command to activate the quickopen sidebar so that the user can
     // find it in the command palette, assign a hotkey, etc.
-    const command: string = "quickopen:activate";
+    const command: string = 'quickopen:activate';
     app.commands.addCommand(command, {
-      label: "Quick Open",
+      label: 'Quick Open',
       execute: () => {
         labShell.activateById(widget.id);
-      }
+      },
     });
-    palette.addItem({ command, category: "File Operations" });
+    palette.addItem({ command, category: 'File Operations' });
 
     // Add the quickopen widget as a left sidebar
-    labShell.add(widget, "left", { rank: 1000 });
-  }
+    labShell.add(widget, 'left', { rank: 1000 });
+  },
 };
 
 export default extension;

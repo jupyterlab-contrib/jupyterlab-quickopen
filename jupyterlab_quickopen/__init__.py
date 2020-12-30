@@ -1,40 +1,51 @@
-import os
+"""Registers the jupyterlab front and backend quickopen extensions"""
+import json
+import os.path as osp
+
+from ._version import __version__
+
+HERE = osp.abspath(osp.dirname(__file__))
+
+with open(osp.join(HERE, 'labextension', 'package.json')) as fid:
+    data = json.load(fid)
+
+def _jupyter_labextension_paths():
+    return [{
+        'src': 'labextension',
+        'dest': data['name']
+    }]
+
+
 
 from .handler import QuickOpenHandler
-from ._version import get_versions
-from notebook.utils import url_path_join
+from jupyter_server.utils import url_path_join
 
 
-__version__ = get_versions()['version']
-del get_versions
-
-
-def _jupyter_server_extension_paths():
-    """Defines the entrypoint for the Jupyter server extension."""
+def _jupyter_server_extension_points():
     return [{
         "module": "jupyterlab_quickopen"
     }]
 
 
-def load_jupyter_server_extension(nb_app):
-    """Registers the quick open API handler to receive HTTP requests from the frontend extension.
+def _load_jupyter_server_extension(server_app):
+    """Registers the API handler to receive HTTP requests from the frontend extension.
 
     Parameters
     ----------
-    nb_app: notebook.notebookapp.NotebookApp
-        Notebook application instance
+    lab_app: jupyterlab.labapp.LabApp
+        JupyterLab application instance
     """
-    if (not os.path.isdir(nb_app.notebook_dir)
-        or nb_app.contents_manager.root_dir != nb_app.notebook_dir):
-        nb_app.log.info(f'Refusing to register QuickOpenHandler extension: '
-            f'{nb_app.contents_manager} does not appear to load from the local filesystem')
+    if (not os.path.isdir(server_app.notebook_dir)
+        or server_app.contents_manager.root_dir != server_app.notebook_dir):
+        server_app.log.info(f'Refusing to register QuickOpenHandler extension: '
+            f'{server_app.contents_manager} does not appear to load from the local filesystem')
         return
 
-    web_app = nb_app.web_app
+    web_app = server_app.web_app
     host_pattern = '.*$'
-    route_pattern = url_path_join(web_app.settings['base_url'], '/api/quickopen')
+    route_pattern = url_path_join(web_app.settings['base_url'], 'jupyterlab-quickopen')
     web_app.add_handlers(host_pattern, [
         (route_pattern, QuickOpenHandler)
     ])
-    nb_app.log.info(f'Registered QuickOpenHandler extension at URL path {route_pattern} '
-                    f'to serve results of scanning local path {nb_app.notebook_dir}')
+    server_app.log.info(f'Registered QuickOpenHandler extension at URL path {route_pattern} '
+                    f'to serve results of scanning local path {server_app.notebook_dir}')

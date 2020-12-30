@@ -3,7 +3,7 @@ import time
 
 from fnmatch import fnmatch
 
-from notebook.base.handlers import APIHandler
+from jupyter_server.base.handlers import APIHandler
 from tornado import web
 from tornado.log import app_log
 from tornado.escape import json_encode
