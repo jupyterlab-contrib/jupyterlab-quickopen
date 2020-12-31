@@ -16,7 +16,7 @@ import { ISignal, Signal } from '@lumino/signaling';
 import { CommandPalette } from '@lumino/widgets';
 
 /** Structure of the JSON response from the server */
-interface QuickOpenResponse {
+interface IQuickOpenResponse {
   readonly contents: { [key: string]: string[] };
   readonly scanSeconds: number;
 }
@@ -25,7 +25,7 @@ interface QuickOpenResponse {
 async function fetchContents(
   path: string,
   excludes: string[]
-): Promise<QuickOpenResponse> {
+): Promise<IQuickOpenResponse> {
   const query = excludes
     .map(exclude => {
       return 'excludes=' + encodeURIComponent(exclude);
@@ -82,22 +82,25 @@ class QuickOpenWidget extends CommandPalette {
   /**
    * Refreshes the widget with the paths of files on the server.
    */
-  protected async onActivateRequest(msg: Message) {
+  protected async onActivateRequest(msg: Message): Promise<void> {
     super.onActivateRequest(msg);
 
     // Fetch the current contents from the server
-    let path = this._settings.relativeSearch
+    const path = this._settings.relativeSearch
       ? this._fileBrowser.model.path
       : '';
-    let response = await fetchContents(path, <string[]>this._settings.excludes);
+    const response = await fetchContents(
+      path,
+      this._settings.excludes as string[]
+    );
 
     // Remove all paths from the view
     this.clearItems();
 
-    for (let category in response.contents) {
-      for (let fn of response.contents[category]) {
+    for (const category in response.contents) {
+      for (const fn of response.contents[category]) {
         // Creates commands that are relative file paths on the server
-        let command = `${category}/${fn}`;
+        const command = `${category}/${fn}`;
         if (!this.commands.hasCommand(command)) {
           // Only add the command to the registry if it does not yet exist
           // TODO: Track disposables and remove
@@ -161,7 +164,7 @@ const extension: JupyterFrontEndPlugin<void> = {
 
     // Add a command to activate the quickopen sidebar so that the user can
     // find it in the command palette, assign a hotkey, etc.
-    const command: string = 'quickopen:activate';
+    const command = 'quickopen:activate';
     app.commands.addCommand(command, {
       label: 'Quick Open',
       execute: () => {
