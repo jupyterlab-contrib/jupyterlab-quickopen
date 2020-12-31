@@ -28,7 +28,7 @@ clean: ## Make a clean source tree
 lab: ## Make a instance of jupyterlab
 	jupyter lab
 
-lint: ## Make a linter run over the typescript
+eslint: ## Make a linter run over the typescript
 	jlpm run eslint:check
 
 nuke: clean ## Make a clean source tree and nuke the venv
