@@ -9,34 +9,22 @@ Quickly open a file in JupyterLab by typing part of its name
 ## Compatibility
 
 - Python >=3.7.x
-- JupyterLab >=2.0,<3.0
-- Jupyter Notebook >=6.0,<7.0
-- Notebook server configurations where notebook documents and other files reside on the local
+- [JupyterLab](https://github.com/jupyterlab/jupyterlab) >=3.0,<4.0
+- [Jupyter Server](https://github.com/jupyter/jupyter_server) >=1.0,<2.0
+- Server configurations where notebook documents and other files reside on the local
   filesystem (which is the the notebook server default)
 
 ## Install
 
-Install the Jupyter Notebook server extension under `PREFIX` (e.g., the active virtualenv or conda
-env).
+Starting in version 1.0 of this extension, the frontend portion of this extension is pre-compiled
+and included in the `pip` installed package thanks to [changes in the JupyterLab 3.0 packaging
+system](https://jupyterlab.readthedocs.io/en/stable/getting_started/changelog.html#extensions-can-be-installed-without-building-jupyterlab-with-nodejs).
 
-```
+To install the Jupyter Notebook server extension under `PREFIX` (e.g., the active virtualenv or conda
+env), run the following:
+
+```bash
 pip install jupyterlab-quickopen
-```
-
-Then install the JupyterLab frontend extension.
-
-```
-jupyter labextension install @parente/jupyterlab-quickopen
-```
-
-### Install Alternatives
-
-You can use `jupyter serverextension` commands to enable and disable the server extension in
-different contexts, e.g.:
-
-```
-jupyter serverextension enable --py jupyterlab_quickopen --user
-jupyter serverextension disable --py jupyterlab_quickopen --sys-prefix
 ```
 
 ## Configure
@@ -48,14 +36,12 @@ by clicking _Settings &rarr; Advanced Settings Editor &rarr; Keyboard Shortcuts_
 the _User Overrides_ text area like the following, adjusting the `keys` value to assign the shortcut
 of your choosing:
 
-```
+```json
 {
   "shortcuts": [
     {
       "command": "quickopen:activate",
-      "keys": [
-        "Accel Ctrl P"
-      ],
+      "keys": ["Accel Ctrl P"],
       "selector": "body",
       "title": "Activate Quick Open",
       "category": "Main Area"
@@ -82,50 +68,37 @@ area to override the default values.
 
 ## Develop
 
-The project includes a Makefile which makes setting up a development environment using `poetry`
+The project includes a Makefile which makes setting up a development environment using `pip -m venv`
 easy. You must also install the latest Node LTS release as a prerequisite.
 
-```
-# Install poetry
-make poetry
-
-# Refresh the poetry.lock file if upgrading jupyterlab in pyproject.toml
-poetry lock
-
+```bash
 # Create a dev environment
 make venv
 
 # Activate the dev environment
-make shell
+`make shell`
 
-# Install the frontend and server extensions
-make build
+# In one terminal, watch the frontend source for changes and rebuild the extension
+make watch
 
-# In one terminal, watch the frontend extension source for changes and rebuild
-# the extension package
-make watch-src
-
-# In a second terminal, watch for rebuilt extension packages and rebuild
-# jupyterlab to include them
-make shell
-make watch-lab
+# In a second terminal, run JupyterLab.
+`make shell`
+make lab
 ```
 
-Keep an eye on the terminal running `watch-src` for TypeScript build errors. Keep an eye on the
-terminal running `watch-lab` to know when to refresh your browser. Quit and re-run the
-`make watch-lab` command any time you make changes to the **server** extension.
+Keep an eye on the terminal running `make watch` for TypeScript build errors. Quit and re-run the
+`make lab` command any time you make changes to the **server** extension.
 
 ## Release
 
-Make a commit with version number bumps in `package.json` and `pyproject.toml`. Then do the
-following.
+Make a commit with version number bumps in `package.json`. Then do the following.
 
-```
+```bash
 # Tag the release commit
 git tag -a -m "0.4.0" 0.4.0
 
 # Activate the dev environment
-make shell
+`make shell`
 
 # Build and push releases to pypi and npmjs
 make release
@@ -140,3 +113,10 @@ repo. Putting this feature into JupyterLab-proper requires making the server-sid
 `ContentManagers` that are not based on the local filesystem. That change might require a new
 `ContentManager` API since walking the file hierarchy via HTTP calls is pretty heavyweight.
 Python/TypeScript tests are also required.
+
+_Will this extension work with JupyterLab 2.x?_
+
+Version 0.5.0 is the last revision compatible with JupyterLab 2.x. See the [README in the 0.5.0
+tagged commit](https://github.com/parente/jupyterlab-quickopen/tree/0.5.0) for install instructions.
+
+Be aware that I do **not** backport security and bug fixes to this or older versions.
