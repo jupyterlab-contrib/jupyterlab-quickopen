@@ -30,8 +30,8 @@ def _load_jupyter_server_extension(server_app):
     lab_app: jupyterlab.labapp.LabApp
         JupyterLab application instance
     """
-    server_app.log.info("notebook_dir: %s", server_app.notebook_dir)
-    server_app.log.info(
+    server_app.log.debug("notebook_dir: %s", server_app.notebook_dir)
+    server_app.log.debug(
         "contents_manager.root_dir: %s", server_app.contents_manager.root_dir
     )
     if (
