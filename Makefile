@@ -10,12 +10,23 @@ build: ## Make an install of the frontend and server extensions
 	@jlpm run build
 
 clean: ## Make a clean source tree
-	# TODO: update
-	-find . -name '*.pyc' -exec rm -fv {} \;
-	rm -rf $(PKG_NAME)/__pycache__ __pycache__
-	rm -rf *.egg-info node_modules/ lib/ dist/
+	rm -rf __pycache__ \
+		build/ \
+		dist/ \
+		jupyterlab_quickopen/__pycache__ \
+		jupyterlab_quickopen/labextension \
+		lib/ \
+		node_modules/ \
+		*.egg-info \
+		tsconfig.tsbuildinfo
 
-package: ## Make source and wheel packages
+lab: ## Make a instance of jupyterlab
+	@jupyter lab
+
+nuke: clean ## Make a clean source tree and nuke the venv
+	rm -rf .venv
+
+packages: ## Make source and wheel packages
 	rm -rf dist/
 	python setup.py sdist
 	python setup.py bdist_wheel
