@@ -10,7 +10,7 @@ build: ## Make an install of the frontend and server extensions
 	jlpm run build
 
 check: ## Check for proper package install (not in development mode)
-	jupyter serverextension list 2>&1 | grep -ie "jupyterlab_quickopen.*OK"
+	jupyter-server extension list 2>&1 | grep -ie "jupyterlab_quickopen.*OK"
 	jupyter labextension list 2>&1 | grep -ie "@parente/jupyterlab-quickopen.*OK"
 	python -m jupyterlab.browser_check
 
