@@ -14,7 +14,7 @@ WORKDIR ${HOME}
 
 # Add project and demo dependencies
 RUN apt update \
-    && apt install -q wamerican procps \
+    && apt install -y -q wamerican procps \
     && pip install --no-cache jupyterlab-quickopen \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
