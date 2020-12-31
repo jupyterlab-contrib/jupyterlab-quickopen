@@ -68,8 +68,8 @@ area to override the default values.
 
 ## Develop
 
-The project includes a Makefile which makes setting up a development environment using `pip -m venv`
-easy. You must also install the latest Node LTS release as a prerequisite.
+The project includes a Makefile to aid setting up a development environment using `python3`, `venv`,
+and `pip`. You must also install the latest Node LTS release as a prerequisite.
 
 ```bash
 # Create a dev environment
