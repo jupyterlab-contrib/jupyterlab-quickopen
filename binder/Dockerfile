@@ -14,5 +14,8 @@ WORKDIR ${HOME}
 RUN apt update \
     && apt install -q wamerican \
     && pip install --no-cache jupyterlab-quickopen \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+RUN cd $(dirname $(which jupyter-notebook)) \
+    && rm jupyter-notebook \
+    && ln -s jupyter-server jupyter-notebook
