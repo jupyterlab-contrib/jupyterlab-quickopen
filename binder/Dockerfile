@@ -19,6 +19,8 @@ RUN apt update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+ADD tutorial.ipynb binder/tutorial.ipynb
+
 # As of 2020-12-31, force binder to use jupyter-server instead of jupyter-notebook
 RUN cd $(dirname $(which jupyter-notebook)) \
     && rm jupyter-notebook \
