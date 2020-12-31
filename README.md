@@ -100,8 +100,11 @@ git tag -a -m "0.4.0" 0.4.0
 # Activate the dev environment
 `make shell`
 
-# Build and push releases to pypi and npmjs
+# Build, sign, and push release to test.pypi.org
 make release
+
+# Build, sign and push releases to pypi.org
+make release PYPI_URI=pypi
 ```
 
 ## FAQ
