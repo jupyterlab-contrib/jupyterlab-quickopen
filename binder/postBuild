@@ -1,2 +1,0 @@
-#!/bin/bash
-jupyter labextension install @parente/jupyterlab-quickopen
