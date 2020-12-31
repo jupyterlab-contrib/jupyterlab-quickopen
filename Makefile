@@ -7,7 +7,12 @@ help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 build: ## Make an install of the frontend and server extensions
-	@jlpm run build
+	jlpm run build
+
+check: ## Check for proper package install (not in development mode)
+	jupyter serverextension list 2>&1 | grep -ie "jupyterlab_quickopen.*OK"
+	jupyter labextension list 2>&1 | grep -ie "@parente/jupyterlab-quickopen.*OK"
+	python -m jupyterlab.browser_check
 
 clean: ## Make a clean source tree
 	rm -rf __pycache__ \
@@ -21,7 +26,10 @@ clean: ## Make a clean source tree
 		tsconfig.tsbuildinfo
 
 lab: ## Make a instance of jupyterlab
-	@jupyter lab
+	jupyter lab
+
+lint: ## Make a linter run over the typescript
+	jlpm run eslint:check
 
 nuke: clean ## Make a clean source tree and nuke the venv
 	rm -rf .venv
@@ -42,7 +50,7 @@ shell: ## Make venv activate command to eval in the shell
 venv: ## Make a development virtual env
 	python3 -m venv .venv
 	source ./.venv/bin/activate \
-		&& pip install -r requirements-dev.txt\
+		&& pip install -r requirements-dev.txt \
 		&& pip install -e . \
 		&& jupyter labextension develop . --overwrite
 
