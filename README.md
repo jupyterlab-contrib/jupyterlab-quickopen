@@ -4,7 +4,7 @@
 
 Quickly open a file in JupyterLab by typing part of its name
 
-![Animation showing entering partial filenames in the quick open sidebar and the corresponding file editor opening](./doc/quickopen.gif)
+![Animation showing entering partial filenames in the quick open sidebar and the corresponding file editor opening](https://raw.githubusercontent.com/parente/jupyterlab-quickopen/master/doc/quickopen.gif)
 
 ## Compatibility
 

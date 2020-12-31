@@ -1,6 +1,10 @@
 .PHONY: help build clean package release shell venv watch
 
 SHELL:=bash
+# keybase.io/parente
+GPG_PUBKEY:=F020F9E14991B4A841BF948E573D3A785F16E056
+# Default to releasing to test.pypi.org (override: make release PYPI_URI=pypi)
+PYPI_URI?=testpypi
 
 help:
 # http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
@@ -36,13 +40,12 @@ nuke: clean ## Make a clean source tree and nuke the venv
 
 packages: ## Make source and wheel packages
 	rm -rf dist/
-	python setup.py sdist
-	python setup.py bdist_wheel
+	python setup.py sdist bdist_wheel
 	ls -l dist/
 
-release: package ## Make a release on PyPI
-	# TODO
-	# twine upload dist/*.tar.gz
+release: packages ## Make a release on PyPI
+	twine check dist/*
+	twine upload --repository $(PYPI_URI) --sign --identity $(GPG_PUBKEY) dist/*
 
 shell: ## Make venv activate command to eval in the shell
 	@echo "source ./.venv/bin/activate"
