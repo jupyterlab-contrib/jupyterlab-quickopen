@@ -2,3 +2,4 @@ black
 jupyterlab>=3.0,<4.0a
 jupyter-packaging
 twine
+wheel
