@@ -24,7 +24,7 @@ jobs:
       - name: Install dev dependencies
         run: |
           pip install -r requirements-dev.txt
-          jlpm
+          npm install
       - name: Build the extension
         run: make build
       - name: Lint the extension
@@ -49,7 +49,9 @@ jobs:
           python-version: '3.9'
           architecture: 'x64'
       - name: Install packaging dependencies
-        run: pip install -r requirements-dev.txt
+        run: |
+          pip install -r requirements-dev.txt
+          npm install
       - name: Package the extension
         run: make packages
       - name: Test extension install
