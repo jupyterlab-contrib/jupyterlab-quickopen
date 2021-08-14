@@ -1,19 +1,23 @@
 include LICENSE
 include README.md
+include RELEASE.md
 include pyproject.toml
-include jupyter-config/jupyterlab-quickopen.json
+recursive-include jupyter-config *.json
 
 include package.json
 include install.json
 include ts*.json
+include yarn.lock
 
-graft jupyterlab-quickopen/labextension
+graft jupyterlab_quickopen/labextension
 
 # Javascript files
 graft src
 graft style
+graft schema
 prune **/node_modules
 prune lib
+prune binder
 
 # Patterns to exclude from any directory
 global-exclude *~

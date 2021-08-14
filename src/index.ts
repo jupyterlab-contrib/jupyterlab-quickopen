@@ -10,7 +10,7 @@ import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { FileBrowser, IFileBrowserFactory } from '@jupyterlab/filebrowser';
 import { CommandRegistry } from '@lumino/commands';
-import { ReadonlyJSONObject } from '@lumino/coreutils';
+import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { Message } from '@lumino/messaging';
 import { ISignal, Signal } from '@lumino/signaling';
 import { CommandPalette } from '@lumino/widgets';
@@ -56,16 +56,17 @@ async function fetchContents(
  */
 class QuickOpenWidget extends CommandPalette {
   private _pathSelected = new Signal<this, string>(this);
-  private _settings: ReadonlyJSONObject;
+  private _settings: ReadonlyPartialJSONObject;
   private _fileBrowser: FileBrowser;
 
-  constructor(factory: IFileBrowserFactory, options: CommandPalette.IOptions) {
+  constructor(factory: IFileBrowserFactory, settings: ReadonlyPartialJSONObject, options: CommandPalette.IOptions) {
     super(options);
 
     this.id = 'jupyterlab-quickopen';
     this.title.iconClass = 'jp-SideBar-tabIcon jp-SearchIcon';
     this.title.caption = 'Quick Open';
-
+    
+    this._settings = settings;
     this._fileBrowser = factory.defaultBrowser;
   }
 
@@ -75,7 +76,7 @@ class QuickOpenWidget extends CommandPalette {
   }
 
   /** Current extension settings */
-  set settings(settings: ReadonlyJSONObject) {
+  set settings(settings: ReadonlyPartialJSONObject) {
     this._settings = settings;
   }
 
@@ -142,12 +143,12 @@ const extension: JupyterFrontEndPlugin<void> = {
   ) => {
     console.log(`Activated extension: ${extension.id}`);
     const commands: CommandRegistry = new CommandRegistry();
-    const widget: QuickOpenWidget = new QuickOpenWidget(fileBrowserFactory, {
-      commands
-    });
     const settings: ISettingRegistry.ISettings = await settingRegistry.load(
       extension.id
     );
+    const widget: QuickOpenWidget = new QuickOpenWidget(fileBrowserFactory, settings.composite, {
+      commands
+    });
 
     // Listen for path selection signals and show the selected files in the
     // appropriate editor/viewer
@@ -157,7 +158,6 @@ const extension: JupyterFrontEndPlugin<void> = {
     });
 
     // Listen for setting changes and apply them to the widget
-    widget.settings = settings.composite;
     settings.changed.connect((settings: ISettingRegistry.ISettings) => {
       widget.settings = settings.composite;
     });

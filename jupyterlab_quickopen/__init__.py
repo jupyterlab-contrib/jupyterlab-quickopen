@@ -1,12 +1,12 @@
 """Registers the jupyterlab front and backend quickopen extensions"""
 import json
-import os.path as osp
+from pathlib import Path
 
 from ._version import __version__
 
-HERE = osp.abspath(osp.dirname(__file__))
+HERE = Path(__file__).parent.resolve()
 
-with open(osp.join(HERE, "labextension", "package.json")) as fid:
+with (HERE / "labextension" / "package.json").open() as fid:
     data = json.load(fid)
 
 
@@ -27,7 +27,7 @@ def _load_jupyter_server_extension(server_app):
 
     Parameters
     ----------
-    lab_app: jupyterlab.labapp.LabApp
+    server_app: jupyterlab.labapp.LabApp
         JupyterLab application instance
     """
     server_app.log.debug("notebook_dir: %s", server_app.notebook_dir)
@@ -35,7 +35,7 @@ def _load_jupyter_server_extension(server_app):
         "contents_manager.root_dir: %s", server_app.contents_manager.root_dir
     )
     if (
-        not osp.isdir(server_app.root_dir)
+        not Path(server_app.root_dir).is_dir()
         or server_app.contents_manager.root_dir != server_app.root_dir
     ):
         server_app.log.info(
@@ -54,3 +54,7 @@ def _load_jupyter_server_extension(server_app):
         f"Registered QuickOpenHandler extension at URL path {route_pattern} "
         f"to serve results of scanning local path {server_app.notebook_dir}"
     )
+
+
+# For backward compatibility with notebook server - useful for Binder/JupyterHub
+load_jupyter_server_extension = _load_jupyter_server_extension

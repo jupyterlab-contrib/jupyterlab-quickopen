@@ -9,8 +9,8 @@ Quickly open a file in JupyterLab by typing part of its name
 ## Compatibility
 
 - Python >=3.7.x
-- [JupyterLab](https://github.com/jupyterlab/jupyterlab) >=3.0,<4.0
-- [Jupyter Server](https://github.com/jupyter/jupyter_server) >=1.0,<2.0
+- [JupyterLab](https://github.com/jupyterlab/jupyterlab) >=3.1,<4.0
+- [Jupyter Server](https://github.com/jupyter/jupyter_server) >=1.6,<2.0
 - Configurations where notebook documents and other files reside on a filesystem local to the
   Jupyter Server (which is the the default), not remote storage (e.g., S3)
 
@@ -119,7 +119,4 @@ Python/TypeScript tests are also required.
 
 _Will this extension work with JupyterLab 2.x?_
 
-Version 0.5.0 is the last revision compatible with JupyterLab 2.x. See the [README in the 0.5.0
-tagged commit](https://github.com/parente/jupyterlab-quickopen/tree/0.5.0) for install instructions.
-
-Be aware that I do **not** backport security and bug fixes to this or older versions.
+Not since [version 0.5.0(https://github.com/parente/jupyterlab-quickopen/tree/0.5.0).
