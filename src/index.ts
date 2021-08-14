@@ -10,7 +10,7 @@ import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { FileBrowser, IFileBrowserFactory } from '@jupyterlab/filebrowser';
 import { CommandRegistry } from '@lumino/commands';
-import { ReadonlyJSONObject } from '@lumino/coreutils';
+import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { Message } from '@lumino/messaging';
 import { ISignal, Signal } from '@lumino/signaling';
 import { CommandPalette } from '@lumino/widgets';
@@ -51,21 +51,25 @@ async function fetchContents(
 }
 
 /**
- * Shows files nested under directories in the root notebooks directory
- * configured on the server.
+ * Shows files nested under directories in the root notebooks directory configured on the server.
  */
 class QuickOpenWidget extends CommandPalette {
   private _pathSelected = new Signal<this, string>(this);
-  private _settings: ReadonlyJSONObject;
+  private _settings: ReadonlyPartialJSONObject;
   private _fileBrowser: FileBrowser;
 
-  constructor(factory: IFileBrowserFactory, options: CommandPalette.IOptions) {
+  constructor(
+    factory: IFileBrowserFactory,
+    settings: ReadonlyPartialJSONObject,
+    options: CommandPalette.IOptions
+  ) {
     super(options);
 
     this.id = 'jupyterlab-quickopen';
     this.title.iconClass = 'jp-SideBar-tabIcon jp-SearchIcon';
     this.title.caption = 'Quick Open';
 
+    this._settings = settings;
     this._fileBrowser = factory.defaultBrowser;
   }
 
@@ -75,7 +79,7 @@ class QuickOpenWidget extends CommandPalette {
   }
 
   /** Current extension settings */
-  set settings(settings: ReadonlyJSONObject) {
+  set settings(settings: ReadonlyPartialJSONObject) {
     this._settings = settings;
   }
 
@@ -102,8 +106,8 @@ class QuickOpenWidget extends CommandPalette {
         // Creates commands that are relative file paths on the server
         const command = `${category}/${fn}`;
         if (!this.commands.hasCommand(command)) {
-          // Only add the command to the registry if it does not yet exist
-          // TODO: Track disposables and remove
+          // Only add the command to the registry if it does not yet exist TODO: Track disposables
+          // and remove
           this.commands.addCommand(command, {
             label: fn,
             execute: () => {
@@ -142,28 +146,31 @@ const extension: JupyterFrontEndPlugin<void> = {
   ) => {
     console.log(`Activated extension: ${extension.id}`);
     const commands: CommandRegistry = new CommandRegistry();
-    const widget: QuickOpenWidget = new QuickOpenWidget(fileBrowserFactory, {
-      commands
-    });
     const settings: ISettingRegistry.ISettings = await settingRegistry.load(
       extension.id
     );
+    const widget: QuickOpenWidget = new QuickOpenWidget(
+      fileBrowserFactory,
+      settings.composite,
+      {
+        commands
+      }
+    );
 
-    // Listen for path selection signals and show the selected files in the
-    // appropriate editor/viewer
+    // Listen for path selection signals and show the selected files in the appropriate
+    // editor/viewer
     widget.pathSelected.connect((sender: QuickOpenWidget, path: string) => {
       labShell.collapseLeft();
       docManager.openOrReveal(PathExt.normalize(path));
     });
 
     // Listen for setting changes and apply them to the widget
-    widget.settings = settings.composite;
     settings.changed.connect((settings: ISettingRegistry.ISettings) => {
       widget.settings = settings.composite;
     });
 
-    // Add a command to activate the quickopen sidebar so that the user can
-    // find it in the command palette, assign a hotkey, etc.
+    // Add a command to activate the quickopen sidebar so that the user can find it in the command
+    // palette, assign a hotkey, etc.
     const command = 'quickopen:activate';
     app.commands.addCommand(command, {
       label: 'Quick Open',

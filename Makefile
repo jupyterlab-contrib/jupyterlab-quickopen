@@ -20,6 +20,7 @@ check: ## Check for proper package install (not in development mode)
 
 clean: ## Make a clean source tree
 	rm -rf __pycache__ \
+		.ipynb_checkpoints \
 		build/ \
 		dist/ \
 		jupyterlab_quickopen/__pycache__ \
@@ -40,6 +41,7 @@ nuke: clean ## Make a clean source tree and nuke the venv
 
 packages: ## Make source and wheel packages
 	rm -rf dist/
+	jlpm run build:prod
 	python setup.py sdist bdist_wheel
 	ls -l dist/
 
@@ -55,7 +57,8 @@ venv: ## Make a development virtual env
 	source ./.venv/bin/activate \
 		&& pip install -r requirements-dev.txt \
 		&& pip install -e . \
-		&& jupyter labextension develop . --overwrite
+		&& jupyter labextension develop . --overwrite \
+		&& jupyter server extension enable jupyterlab_quickopen
 
 watch: ## Watch source changes and rebuild
 	jlpm run watch
