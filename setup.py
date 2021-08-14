@@ -12,24 +12,31 @@ HERE = Path(__file__).parent.resolve()
 # The name of the project
 name = "jupyterlab_quickopen"
 
-lab_path = (HERE / name.replace("-", "_") / "labextension")
+lab_path = HERE / name.replace("-", "_") / "labextension"
 
 # Representative files that should exist after a successful build
-ensured_targets = [
-    str(lab_path / "package.json"),
-    str(lab_path / "static/style.js")
-]
+ensured_targets = [str(lab_path / "package.json"), str(lab_path / "static/style.js")]
 
-labext_name = "jupyterlab-quickopen"
+labext_name = "@parente/jupyterlab-quickopen"
 
 data_files_spec = [
-    ("share/jupyter/labextensions/%s" % labext_name, str(lab_path.relative_to(HERE)), "**"),
+    (
+        "share/jupyter/labextensions/%s" % labext_name,
+        str(lab_path.relative_to(HERE)),
+        "**",
+    ),
     ("share/jupyter/labextensions/%s" % labext_name, str("."), "install.json"),
-    ("etc/jupyter/jupyter_server_config.d",
-     "jupyter-config/server-config", "jupyterlab_quickopen.json"),
+    (
+        "etc/jupyter/jupyter_server_config.d",
+        "jupyter-config/server-config",
+        "jupyterlab_quickopen.json",
+    ),
     # For backward compatibility with notebook server
-    ("etc/jupyter/jupyter_notebook_config.d",
-     "jupyter-config/nb-config", "jupyterlab_quickopen.json"),
+    (
+        "etc/jupyter/jupyter_notebook_config.d",
+        "jupyter-config/nb-config",
+        "jupyterlab_quickopen.json",
+    ),
 ]
 
 long_description = (HERE / "README.md").read_text()
@@ -48,9 +55,7 @@ setup_args = dict(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
-    install_requires=[
-        "jupyter_server>=1.6,<2"
-    ],
+    install_requires=["jupyter_server>=1.6,<2"],
     zip_safe=False,
     include_package_data=True,
     python_requires=">=3.6",
@@ -74,20 +79,22 @@ setup_args = dict(
 )
 
 try:
-    from jupyter_packaging import (
-        wrap_installers,
-        npm_builder,
-        get_data_files
-    )
+    from jupyter_packaging import wrap_installers, npm_builder, get_data_files
+
     post_develop = npm_builder(
         build_cmd="install:extension", source_dir="src", build_dir=lab_path
     )
-    setup_args["cmdclass"] = wrap_installers(post_develop=post_develop, ensured_targets=ensured_targets)
+    setup_args["cmdclass"] = wrap_installers(
+        post_develop=post_develop, ensured_targets=ensured_targets
+    )
     setup_args["data_files"] = get_data_files(data_files_spec)
 except ImportError as e:
     import logging
+
     logging.basicConfig(format="%(levelname)s: %(message)s")
-    logging.warning("Build tool `jupyter-packaging` is missing. Install it with pip or conda.")
+    logging.warning(
+        "Build tool `jupyter-packaging` is missing. Install it with pip or conda."
+    )
     if not ("--name" in sys.argv or "--version" in sys.argv):
         raise e
 
