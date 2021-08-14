@@ -51,21 +51,24 @@ async function fetchContents(
 }
 
 /**
- * Shows files nested under directories in the root notebooks directory
- * configured on the server.
+ * Shows files nested under directories in the root notebooks directory configured on the server.
  */
 class QuickOpenWidget extends CommandPalette {
   private _pathSelected = new Signal<this, string>(this);
   private _settings: ReadonlyPartialJSONObject;
   private _fileBrowser: FileBrowser;
 
-  constructor(factory: IFileBrowserFactory, settings: ReadonlyPartialJSONObject, options: CommandPalette.IOptions) {
+  constructor(
+    factory: IFileBrowserFactory,
+    settings: ReadonlyPartialJSONObject,
+    options: CommandPalette.IOptions
+  ) {
     super(options);
 
     this.id = 'jupyterlab-quickopen';
     this.title.iconClass = 'jp-SideBar-tabIcon jp-SearchIcon';
     this.title.caption = 'Quick Open';
-    
+
     this._settings = settings;
     this._fileBrowser = factory.defaultBrowser;
   }
@@ -103,8 +106,8 @@ class QuickOpenWidget extends CommandPalette {
         // Creates commands that are relative file paths on the server
         const command = `${category}/${fn}`;
         if (!this.commands.hasCommand(command)) {
-          // Only add the command to the registry if it does not yet exist
-          // TODO: Track disposables and remove
+          // Only add the command to the registry if it does not yet exist TODO: Track disposables
+          // and remove
           this.commands.addCommand(command, {
             label: fn,
             execute: () => {
@@ -146,12 +149,16 @@ const extension: JupyterFrontEndPlugin<void> = {
     const settings: ISettingRegistry.ISettings = await settingRegistry.load(
       extension.id
     );
-    const widget: QuickOpenWidget = new QuickOpenWidget(fileBrowserFactory, settings.composite, {
-      commands
-    });
+    const widget: QuickOpenWidget = new QuickOpenWidget(
+      fileBrowserFactory,
+      settings.composite,
+      {
+        commands
+      }
+    );
 
-    // Listen for path selection signals and show the selected files in the
-    // appropriate editor/viewer
+    // Listen for path selection signals and show the selected files in the appropriate
+    // editor/viewer
     widget.pathSelected.connect((sender: QuickOpenWidget, path: string) => {
       labShell.collapseLeft();
       docManager.openOrReveal(PathExt.normalize(path));
@@ -162,8 +169,8 @@ const extension: JupyterFrontEndPlugin<void> = {
       widget.settings = settings.composite;
     });
 
-    // Add a command to activate the quickopen sidebar so that the user can
-    // find it in the command palette, assign a hotkey, etc.
+    // Add a command to activate the quickopen sidebar so that the user can find it in the command
+    // palette, assign a hotkey, etc.
     const command = 'quickopen:activate';
     app.commands.addCommand(command, {
       label: 'Quick Open',
