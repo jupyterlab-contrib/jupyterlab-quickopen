@@ -41,6 +41,7 @@ nuke: clean ## Make a clean source tree and nuke the venv
 
 packages: ## Make source and wheel packages
 	rm -rf dist/
+	jlpm run build:prod
 	python setup.py sdist bdist_wheel
 	ls -l dist/
 
