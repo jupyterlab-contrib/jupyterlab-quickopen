@@ -19,11 +19,6 @@ RUN apt update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# As of 2020-12-31, force binder to use jupyter-server instead of jupyter-notebook
-RUN cd $(dirname $(which jupyter-notebook)) \
-    && rm jupyter-notebook \
-    && ln -s jupyter-server jupyter-notebook
-
 # Add the entire source tree
 ADD . .
 RUN chown -R $NB_UID  .
