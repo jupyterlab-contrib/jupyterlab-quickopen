@@ -1,6 +1,6 @@
 {
   "name": "@parente/jupyterlab-quickopen",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Quickly open a file in JupyterLab by part of its name",
   "keywords": [
     "jupyter",

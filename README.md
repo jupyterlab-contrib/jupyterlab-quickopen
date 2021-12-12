@@ -9,7 +9,7 @@ Quickly open a file in JupyterLab by typing part of its name
 ## Compatibility
 
 - Python >=3.7.x
-- [JupyterLab](https://github.com/jupyterlab/jupyterlab) >=3.1,<4.0
+- [JupyterLab](https://github.com/jupyterlab/jupyterlab) >=3.2,<4.0
 - [Jupyter Server](https://github.com/jupyter/jupyter_server) >=1.6,<2.0
 - Configurations where notebook documents and other files reside on a filesystem local to the
   Jupyter Server (which is the the default), not remote storage (e.g., S3)
