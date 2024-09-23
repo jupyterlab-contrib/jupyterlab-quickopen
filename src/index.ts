@@ -8,7 +8,11 @@ import { URLExt, PathExt } from '@jupyterlab/coreutils';
 import { IDocumentManager } from '@jupyterlab/docmanager';
 import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
-import { FileBrowser, IFileBrowserFactory } from '@jupyterlab/filebrowser';
+import {
+  FileBrowser,
+  IDefaultFileBrowser,
+  IFileBrowserFactory
+} from '@jupyterlab/filebrowser';
 import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { Message } from '@lumino/messaging';
@@ -60,6 +64,7 @@ class QuickOpenWidget extends CommandPalette {
 
   constructor(
     factory: IFileBrowserFactory,
+    defaultBrowser: IDefaultFileBrowser,
     settings: ReadonlyPartialJSONObject,
     options: CommandPalette.IOptions
   ) {
@@ -70,7 +75,7 @@ class QuickOpenWidget extends CommandPalette {
     this.title.caption = 'Quick Open';
 
     this._settings = settings;
-    this._fileBrowser = factory.defaultBrowser;
+    this._fileBrowser = defaultBrowser;
   }
 
   /** Signal when a selected path is activated. */
@@ -134,7 +139,8 @@ const extension: JupyterFrontEndPlugin<void> = {
     IDocumentManager,
     ILabShell,
     ISettingRegistry,
-    IFileBrowserFactory
+    IFileBrowserFactory,
+    IDefaultFileBrowser
   ],
   activate: async (
     app: JupyterFrontEnd,
@@ -142,7 +148,8 @@ const extension: JupyterFrontEndPlugin<void> = {
     docManager: IDocumentManager,
     labShell: ILabShell,
     settingRegistry: ISettingRegistry,
-    fileBrowserFactory: IFileBrowserFactory
+    fileBrowserFactory: IFileBrowserFactory,
+    defaultFileBrowser: IDefaultFileBrowser
   ) => {
     console.log(`Activated extension: ${extension.id}`);
     const commands: CommandRegistry = new CommandRegistry();
@@ -151,6 +158,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     );
     const widget: QuickOpenWidget = new QuickOpenWidget(
       fileBrowserFactory,
+      defaultFileBrowser,
       settings.composite,
       {
         commands
