@@ -18,6 +18,13 @@
       "default": false
     }
   },
+  "jupyter.lab.shortcuts": [
+    {
+      "command": "quickopen:activate",
+      "keys": ["Accel Shift P"],
+      "selector": "body"
+    }
+  ],
   "additionalProperties": false,
   "type": "object"
 }

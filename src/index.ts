@@ -3,7 +3,7 @@ import {
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
-import { ICommandPalette } from '@jupyterlab/apputils';
+import { ICommandPalette, ModalCommandPalette } from '@jupyterlab/apputils';
 import { URLExt, PathExt } from '@jupyterlab/coreutils';
 import { IDocumentManager } from '@jupyterlab/docmanager';
 import { ServerConnection } from '@jupyterlab/services';
@@ -177,19 +177,20 @@ const extension: JupyterFrontEndPlugin<void> = {
       widget.settings = settings.composite;
     });
 
+    // Add the quick open widget as a modal palette
+    const modalPalette = new ModalCommandPalette({ commandPalette: widget})
+    modalPalette.attach();
+
     // Add a command to activate the quickopen sidebar so that the user can find it in the command
     // palette, assign a hotkey, etc.
     const command = 'quickopen:activate';
     app.commands.addCommand(command, {
       label: 'Quick Open',
       execute: () => {
-        labShell.activateById(widget.id);
+        modalPalette.activate();
       }
     });
     palette.addItem({ command, category: 'File Operations' });
-
-    // Add the quickopen widget as a left sidebar
-    labShell.add(widget, 'left', { rank: 1000 });
   }
 };
 
