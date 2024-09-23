@@ -1,5 +1,4 @@
 import {
-  ILabShell,
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
@@ -8,11 +7,7 @@ import { URLExt, PathExt } from '@jupyterlab/coreutils';
 import { IDocumentManager } from '@jupyterlab/docmanager';
 import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
-import {
-  FileBrowser,
-  IDefaultFileBrowser,
-  IFileBrowserFactory
-} from '@jupyterlab/filebrowser';
+import { FileBrowser, IDefaultFileBrowser } from '@jupyterlab/filebrowser';
 import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { Message } from '@lumino/messaging';
@@ -63,7 +58,6 @@ class QuickOpenWidget extends CommandPalette {
   private _fileBrowser: FileBrowser;
 
   constructor(
-    factory: IFileBrowserFactory,
     defaultBrowser: IDefaultFileBrowser,
     settings: ReadonlyPartialJSONObject,
     options: CommandPalette.IOptions
@@ -137,18 +131,14 @@ const extension: JupyterFrontEndPlugin<void> = {
   requires: [
     ICommandPalette,
     IDocumentManager,
-    ILabShell,
     ISettingRegistry,
-    IFileBrowserFactory,
     IDefaultFileBrowser
   ],
   activate: async (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
     docManager: IDocumentManager,
-    labShell: ILabShell,
     settingRegistry: ISettingRegistry,
-    fileBrowserFactory: IFileBrowserFactory,
     defaultFileBrowser: IDefaultFileBrowser
   ) => {
     console.log(`Activated extension: ${extension.id}`);
@@ -157,7 +147,6 @@ const extension: JupyterFrontEndPlugin<void> = {
       extension.id
     );
     const widget: QuickOpenWidget = new QuickOpenWidget(
-      fileBrowserFactory,
       defaultFileBrowser,
       settings.composite,
       {
@@ -168,7 +157,6 @@ const extension: JupyterFrontEndPlugin<void> = {
     // Listen for path selection signals and show the selected files in the appropriate
     // editor/viewer
     widget.pathSelected.connect((sender: QuickOpenWidget, path: string) => {
-      labShell.collapseLeft();
       docManager.openOrReveal(PathExt.normalize(path));
     });
 
@@ -178,7 +166,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     });
 
     // Add the quick open widget as a modal palette
-    const modalPalette = new ModalCommandPalette({ commandPalette: widget})
+    const modalPalette = new ModalCommandPalette({ commandPalette: widget });
     modalPalette.attach();
 
     // Add a command to activate the quickopen sidebar so that the user can find it in the command
