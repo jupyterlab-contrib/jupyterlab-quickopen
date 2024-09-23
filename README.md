@@ -29,9 +29,11 @@ pip install jupyterlab-quickopen
 
 ## Configure
 
-### A Keyboard Shortcut
+### Using a custom Keyboard Shortcut
 
-You can assign a keyboard shortcut to show the quickopen panel at any time. Open the keyboard editor
+The default keyboard shortcut for opening the quickopen panel is `Accel Ctrl P`.
+
+You can assign your own keyboard shortcut to show the quickopen panel at any time. Open the keyboard editor
 by clicking _Settings &rarr; Advanced Settings Editor &rarr; Keyboard Shortcuts_. Then enter JSON in
 the _User Overrides_ text area like the following, adjusting the `keys` value to assign the shortcut
 of your choosing:
