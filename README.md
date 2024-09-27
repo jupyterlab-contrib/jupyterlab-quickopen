@@ -1,14 +1,14 @@
 # jupyterlab-quickopen
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/parente/jupyterlab-quickopen/master?urlpath=lab%2Ftree%2Fbinder%2Ftutorial.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyterlab-contrib/jupyterlab-quickopen/master?urlpath=lab%2Ftree%2Fbinder%2Ftutorial.ipynb)
 
 Quickly open a file in JupyterLab by typing part of its name
 
-![Animation showing entering partial filenames in the quick open sidebar and the corresponding file editor opening](https://raw.githubusercontent.com/parente/jupyterlab-quickopen/master/doc/quickopen.gif)
+![Animation showing entering partial filenames in the quick open sidebar and the corresponding file editor opening](https://raw.githubusercontent.com/jupyterlab-contrib/jupyterlab-quickopen/master/doc/quickopen.gif)
 
 ## Compatibility
 
-- Python >=3.7.x
+- Python >=3.8.x
 - [JupyterLab](https://github.com/jupyterlab/jupyterlab) >=3.2,<4.0
 - [Jupyter Server](https://github.com/jupyter/jupyter_server) >=1.6,<2.0
 - Configurations where notebook documents and other files reside on a filesystem local to the
@@ -121,4 +121,4 @@ Python/TypeScript tests are also required.
 
 _Will this extension work with JupyterLab 2.x?_
 
-Not since [version 0.5.0(https://github.com/parente/jupyterlab-quickopen/tree/0.5.0).
+Not since [version 0.5.0(https://github.com/jupyterlab-contrib/jupyterlab-quickopen/tree/0.5.0).
