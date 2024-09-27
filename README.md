@@ -68,57 +68,49 @@ area to override the default values.
 
 ![Screenshot of the quick open settings editor](./doc/settings.png)
 
-## Develop
+### Development install
 
-The project includes a Makefile to aid setting up a development environment using `python3`, `venv`,
-and `pip`. You must also install the latest Node LTS release as a prerequisite.
+Note: You will need NodeJS to build the extension package.
 
-```bash
-# Create a dev environment
-make venv
-
-# Activate the dev environment
-`make shell`
-
-# In one terminal, watch the frontend source for changes and rebuild the extension
-make watch
-
-# In a second terminal, run JupyterLab.
-`make shell`
-make lab
-```
-
-Keep an eye on the terminal running `make watch` for TypeScript build errors. Quit and re-run the
-`make lab` command any time you make changes to the **server** extension.
-
-## Release
-
-Make a commit with version number bumps in `package.json`. Then do the following.
+The `jlpm` command is JupyterLab's pinned version of
+[yarn](https://yarnpkg.com/) that is installed with JupyterLab. You may use
+`yarn` or `npm` in lieu of `jlpm` below.
 
 ```bash
-# Tag the release commit
-git tag -a -m "0.4.0" 0.4.0
-
-# Activate the dev environment
-`make shell`
-
-# Build, sign, and push release to test.pypi.org
-make release
-
-# Build, sign and push releases to pypi.org
-make release PYPI_URI=pypi
+# Clone the repo to your local environment
+# Change directory to the jupyterlab_quickopen directory
+# Install package in development mode
+pip install -e .
+# Link your development version of the extension with JupyterLab
+jupyter labextension develop . --overwrite
+# Server extension must be manually installed in develop mode
+jupyter server extension enable jupyterlab_quickopen
+# Rebuild extension Typescript source after making changes
+jlpm build
 ```
 
-## FAQ
+You can watch the source directory and run JupyterLab at the same time in different terminals to watch for changes in the extension's source and automatically rebuild the extension.
 
-_Does this belong in JupyterLab?_
+```bash
+# Watch the source directory in one terminal, automatically rebuilding when needed
+jlpm watch
+# Run JupyterLab in another terminal
+jupyter lab
+```
 
-Maybe. To start, I wanted to do some hacking and it's easiest to do that in a small, independent
-repo. Putting this feature into JupyterLab-proper requires making the server-side portion work with
-`ContentManagers` that are not based on the local filesystem. That change might require a new
-`ContentManager` API since walking the file hierarchy via HTTP calls is pretty heavyweight.
-Python/TypeScript tests are also required.
+With the watch command running, every saved change will immediately be built locally and available in your running JupyterLab. Refresh JupyterLab to load the change in your browser (you may need to wait several seconds for the extension to be rebuilt).
 
-_Will this extension work with JupyterLab 2.x?_
+By default, the `jlpm build` command generates the source maps for this extension to make it easier to debug using the browser dev tools. To also generate source maps for the JupyterLab core extensions, you can run the following command:
 
-Not since [version 0.5.0(https://github.com/jupyterlab-contrib/jupyterlab-quickopen/tree/0.5.0).
+```bash
+jupyter lab build --minimize=False
+```
+
+### Releasing
+
+See [RELEASE](RELEASE.md)
+
+### Acknowledgements
+
+This extension was originally created by [Peter Parente](https://github.com/parente) and was
+later moved to the `jupyterlab-contrib` GitHub organization.
