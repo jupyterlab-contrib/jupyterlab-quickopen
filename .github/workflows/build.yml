@@ -33,7 +33,7 @@ jobs:
     - name: Build the extension
       run: |
         set -eux
-        python -m pip install .[test]
+        python -m pip install . -vv
 
         jupyter server extension list
         jupyter server extension list 2>&1 | grep -ie "jupyterlab_quickopen.*OK"
