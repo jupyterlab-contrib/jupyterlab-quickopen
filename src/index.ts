@@ -126,7 +126,7 @@ class QuickOpenWidget extends CommandPalette {
  * Initialization data for the jupyterlab-quickopen extension.
  */
 const extension: JupyterFrontEndPlugin<void> = {
-  id: '@parente/jupyterlab-quickopen:plugin',
+  id: 'jupyterlab-quickopen:plugin',
   autoStart: true,
   requires: [
     ICommandPalette,
