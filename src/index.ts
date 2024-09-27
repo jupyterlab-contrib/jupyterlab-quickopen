@@ -1,14 +1,13 @@
 import {
-  ILabShell,
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
-import { ICommandPalette } from '@jupyterlab/apputils';
+import { ICommandPalette, ModalCommandPalette } from '@jupyterlab/apputils';
 import { URLExt, PathExt } from '@jupyterlab/coreutils';
 import { IDocumentManager } from '@jupyterlab/docmanager';
 import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
-import { FileBrowser, IFileBrowserFactory } from '@jupyterlab/filebrowser';
+import { FileBrowser, IDefaultFileBrowser } from '@jupyterlab/filebrowser';
 import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { Message } from '@lumino/messaging';
@@ -59,7 +58,7 @@ class QuickOpenWidget extends CommandPalette {
   private _fileBrowser: FileBrowser;
 
   constructor(
-    factory: IFileBrowserFactory,
+    defaultBrowser: IDefaultFileBrowser,
     settings: ReadonlyPartialJSONObject,
     options: CommandPalette.IOptions
   ) {
@@ -70,7 +69,7 @@ class QuickOpenWidget extends CommandPalette {
     this.title.caption = 'Quick Open';
 
     this._settings = settings;
-    this._fileBrowser = factory.defaultBrowser;
+    this._fileBrowser = defaultBrowser;
   }
 
   /** Signal when a selected path is activated. */
@@ -127,22 +126,20 @@ class QuickOpenWidget extends CommandPalette {
  * Initialization data for the jupyterlab-quickopen extension.
  */
 const extension: JupyterFrontEndPlugin<void> = {
-  id: '@parente/jupyterlab-quickopen:plugin',
+  id: 'jupyterlab-quickopen:plugin',
   autoStart: true,
   requires: [
     ICommandPalette,
     IDocumentManager,
-    ILabShell,
     ISettingRegistry,
-    IFileBrowserFactory
+    IDefaultFileBrowser
   ],
   activate: async (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
     docManager: IDocumentManager,
-    labShell: ILabShell,
     settingRegistry: ISettingRegistry,
-    fileBrowserFactory: IFileBrowserFactory
+    defaultFileBrowser: IDefaultFileBrowser
   ) => {
     console.log(`Activated extension: ${extension.id}`);
     const commands: CommandRegistry = new CommandRegistry();
@@ -150,7 +147,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       extension.id
     );
     const widget: QuickOpenWidget = new QuickOpenWidget(
-      fileBrowserFactory,
+      defaultFileBrowser,
       settings.composite,
       {
         commands
@@ -160,7 +157,6 @@ const extension: JupyterFrontEndPlugin<void> = {
     // Listen for path selection signals and show the selected files in the appropriate
     // editor/viewer
     widget.pathSelected.connect((sender: QuickOpenWidget, path: string) => {
-      labShell.collapseLeft();
       docManager.openOrReveal(PathExt.normalize(path));
     });
 
@@ -169,19 +165,20 @@ const extension: JupyterFrontEndPlugin<void> = {
       widget.settings = settings.composite;
     });
 
+    // Add the quick open widget as a modal palette
+    const modalPalette = new ModalCommandPalette({ commandPalette: widget });
+    modalPalette.attach();
+
     // Add a command to activate the quickopen sidebar so that the user can find it in the command
     // palette, assign a hotkey, etc.
     const command = 'quickopen:activate';
     app.commands.addCommand(command, {
       label: 'Quick Open',
       execute: () => {
-        labShell.activateById(widget.id);
+        modalPalette.activate();
       }
     });
     palette.addItem({ command, category: 'File Operations' });
-
-    // Add the quickopen widget as a left sidebar
-    labShell.add(widget, 'left', { rank: 1000 });
   }
 };
 
