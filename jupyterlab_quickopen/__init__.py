@@ -9,6 +9,7 @@ except ImportError:
     warnings.warn("Importing 'jupyterlab_quickopen' outside a proper installation.")
     __version__ = "dev"
 
+from pathlib import Path
 from .handler import QuickOpenHandler
 from jupyter_server.utils import url_path_join
 
