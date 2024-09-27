@@ -4,24 +4,27 @@
 
 Quickly open a file in JupyterLab by typing part of its name
 
-![Animation showing entering partial filenames in the quick open sidebar and the corresponding file editor opening](https://raw.githubusercontent.com/jupyterlab-contrib/jupyterlab-quickopen/master/doc/quickopen.gif)
+https://github.com/user-attachments/assets/77567c89-ad52-4be8-b0e4-612700353242
 
 ## Compatibility
 
 - Python >=3.8.x
-- [JupyterLab](https://github.com/jupyterlab/jupyterlab) >=3.2,<4.0
-- [Jupyter Server](https://github.com/jupyter/jupyter_server) >=1.6,<2.0
+- [JupyterLab](https://github.com/jupyterlab/jupyterlab) >=3.2
+- [Jupyter Server](https://github.com/jupyter/jupyter_server) >=2.4
 - Configurations where notebook documents and other files reside on a filesystem local to the
   Jupyter Server (which is the the default), not remote storage (e.g., S3)
 
+## Usage
+
+After installing the extension, you can open the quick open panel by pressing `Ctrl Shift P` (or `Cmd P` on macOS). Start typing the name of the file you want to open, and the quick open panel will show a list of files that match the text you've typed.
+
+https://github.com/user-attachments/assets/77567c89-ad52-4be8-b0e4-612700353242
+
+The extension also works in Jupyter Notebook 7:
+
+https://github.com/user-attachments/assets/49147847-2b98-4016-8a11-5d0e8d9749e1
+
 ## Install
-
-Starting in version 1.0 of this extension, the frontend portion of this extension is pre-compiled
-and included in the `pip` installed package thanks to [changes in the JupyterLab 3.0 packaging
-system](https://jupyterlab.readthedocs.io/en/stable/getting_started/changelog.html#extensions-can-be-installed-without-building-jupyterlab-with-nodejs).
-
-To install the Jupyter Notebook server extension under `PREFIX` (e.g., the active virtualenv or conda
-env), run the following:
 
 ```bash
 pip install jupyterlab-quickopen
