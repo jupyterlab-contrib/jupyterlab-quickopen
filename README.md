@@ -59,7 +59,7 @@ JupyterLab settings, or both.
 
 On the server side, use the `ContentsManager.allow_hidden` and/or `ContentsManager.hide_globs`
 settings. See the
-[documentation about Jupyter Notebook options](https://jupyter-notebook.readthedocs.io/en/stable/config.html)
+[documentation about Jupyter Server options](https://jupyter-server.readthedocs.io/en/latest/operators/configuring-extensions.html)
 for details.
 
 In the JupyterLab web app, open the _Settings_ menu, click the _Advanced Settings Editor_ option,
