@@ -11,7 +11,7 @@ from tornado.escape import json_encode
 class QuickOpenHandler(APIHandler):
     @property
     def contents_manager(self):
-        """Currently configured notebook server ContentsManager."""
+        """Currently configured jupyter server ContentsManager."""
         return self.settings["contents_manager"]
 
     @property

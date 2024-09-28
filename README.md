@@ -57,7 +57,7 @@ of your choosing:
 
 ### Patterns to Exclude
 
-You can control which files to exclude from the quick open list using Notebook server settings,
+You can control which files to exclude from the quick open list using the Jupyter Server settings,
 JupyterLab settings, or both.
 
 On the server side, use the `ContentsManager.allow_hidden` and/or `ContentsManager.hide_globs`
