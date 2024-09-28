@@ -1,6 +1,6 @@
 # jupyterlab-quickopen
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyterlab-contrib/jupyterlab-quickopen/master?urlpath=lab%2Ftree%2Fbinder%2Ftutorial.ipynb)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyterlab-contrib/jupyterlab-quickopen/main?urlpath=lab%2Ftree%2Fbinder%2Ftutorial.ipynb)
 
 Quickly open a file in JupyterLab by typing part of its name
 
