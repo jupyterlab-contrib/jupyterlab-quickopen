@@ -1,5 +1,0 @@
-black
-jupyterlab>=3.1,<4.0a
-jupyter-packaging
-twine
-wheel
