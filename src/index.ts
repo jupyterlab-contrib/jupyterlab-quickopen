@@ -8,6 +8,7 @@ import { IDocumentManager } from '@jupyterlab/docmanager';
 import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { FileBrowser, IDefaultFileBrowser } from '@jupyterlab/filebrowser';
+import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { Message } from '@lumino/messaging';
@@ -128,20 +129,17 @@ class QuickOpenWidget extends CommandPalette {
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-quickopen:plugin',
   autoStart: true,
-  requires: [
-    ICommandPalette,
-    IDocumentManager,
-    ISettingRegistry,
-    IDefaultFileBrowser
-  ],
+  requires: [IDocumentManager, ISettingRegistry, IDefaultFileBrowser],
+  optional: [ICommandPalette, ITranslator],
   activate: async (
     app: JupyterFrontEnd,
-    palette: ICommandPalette,
     docManager: IDocumentManager,
     settingRegistry: ISettingRegistry,
-    defaultFileBrowser: IDefaultFileBrowser
+    defaultFileBrowser: IDefaultFileBrowser,
+    palette: ICommandPalette | null,
+    translator: ITranslator | null
   ) => {
-    console.log(`Activated extension: ${extension.id}`);
+    const trans = (translator ?? nullTranslator).load('jupyterlab-quickopen');
     const commands: CommandRegistry = new CommandRegistry();
     const settings: ISettingRegistry.ISettings = await settingRegistry.load(
       extension.id
@@ -173,12 +171,14 @@ const extension: JupyterFrontEndPlugin<void> = {
     // palette, assign a hotkey, etc.
     const command = 'quickopen:activate';
     app.commands.addCommand(command, {
-      label: 'Quick Open',
+      label: trans.__('Quick Open'),
       execute: () => {
         modalPalette.activate();
       }
     });
-    palette.addItem({ command, category: 'File Operations' });
+    if (palette) {
+      palette.addItem({ command, category: 'File Operations' });
+    }
   }
 };
 
