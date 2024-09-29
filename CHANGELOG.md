@@ -80,8 +80,6 @@
 
 ([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2020-03-07&to=2020-03-07&type=c))
 
-
-
 ## 0.4.0
 
 ([full changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/f7c11a3...6a1e07a))
@@ -89,8 +87,6 @@
 ### Contributors to this release
 
 ([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2019-07-28&to=2020-03-07&type=c))
-
-
 
 ## 0.3.0
 
@@ -120,4 +116,3 @@
 ([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2018-12-04&to=2019-06-30&type=c))
 
 [@parente](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Aparente+updated%3A2018-12-04..2019-06-30&type=Issues)
-
