@@ -2,6 +2,46 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 2.0.0
+
+([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/1.2.0...ec87ceb2cb87900d45db06f265c8ce7034caa876))
+
+### :sparkles: Highlights :sparkles:
+
+This version adds support for JupyterLab 4.
+
+It also changes the Quick Open widget to be a modal widget instead of being located in the left area, for consistency with the command palette:
+
+![the quick open widget in JupyterLab](https://github.com/user-attachments/assets/c158ecad-c2ed-4138-af82-80cc5b04a3d9)
+
+The shortcut to open the Quick Open widget is <kbd>Accel Ctrl P</kbd>. It can also be opened via the `View > Quick Open` menu:
+
+![how to open the quick open widget via the view menu](https://github.com/user-attachments/assets/971d3bf8-ed9f-4bca-b1e8-7a38a99da37f)
+
+### Enhancements made
+
+- Update to JupyterLab 4 [#48](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/48) ([@jtpio](https://github.com/jtpio))
+- Add to the menu [#57](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/57) ([@jtpio](https://github.com/jtpio))
+
+### Maintenance and upkeep improvements
+
+- More cleanups [#55](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/55) ([@jtpio](https://github.com/jtpio))
+- Cleanups [#54](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/54) ([@jtpio](https://github.com/jtpio))
+
+### Documentation improvements
+
+- Populate changelog with previous releases [#56](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/56) ([@jtpio](https://github.com/jtpio))
+- Fix link to Binder [#53](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/53) ([@jtpio](https://github.com/jtpio))
+- Add screencasts to the README [#51](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/51) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2021-12-12&to=2024-09-30&type=c))
+
+[@github-actions](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Agithub-actions+updated%3A2021-12-12..2024-09-30&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ajtpio+updated%3A2021-12-12..2024-09-30&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 1.2.0
 
 ([full changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/311f367...dd12b63))
@@ -15,8 +55,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2021-08-14&to=2021-12-12&type=c))
 
 [@parente](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Aparente+updated%3A2021-08-14..2021-12-12&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 1.1.0
 
