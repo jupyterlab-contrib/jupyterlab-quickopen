@@ -62,7 +62,8 @@
         "@jupyterlab/docmanager": "^4.2.5",
         "@jupyterlab/filebrowser": "^4.2.5",
         "@jupyterlab/services": "^7.2.5",
-        "@jupyterlab/settingregistry": "^4.2.5"
+        "@jupyterlab/settingregistry": "^4.2.5",
+        "@jupyterlab/translation": "^4.2.5"
     },
     "devDependencies": {
         "@jupyterlab/builder": "^4.0.0",
