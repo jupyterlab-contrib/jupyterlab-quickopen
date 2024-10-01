@@ -1,5 +1,6 @@
 # jupyterlab-quickopen
 
+[![Extension status](https://img.shields.io/badge/status-ready-success 'ready to be used')](https://jupyterlab-contrib.github.io/)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/jupyterlab-contrib/jupyterlab-quickopen/main?urlpath=lab%2Ftree%2Fbinder%2Ftutorial.ipynb)
 
 Quickly open a file in JupyterLab by typing part of its name
