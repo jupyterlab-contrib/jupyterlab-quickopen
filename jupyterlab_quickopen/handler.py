@@ -4,6 +4,7 @@ import time
 from fnmatch import fnmatch
 
 from jupyter_server.base.handlers import APIHandler
+from jupyter_server.utils import ensure_async
 from tornado import web
 from tornado.escape import json_encode
 
@@ -39,7 +40,7 @@ class QuickOpenHandler(APIHandler):
             any(fnmatch(entry.name, glob) for glob in excludes)
             or not self.contents_manager.should_list(entry.name)
             or (
-                await self.contents_manager.is_hidden(entry.path)
+                await ensure_async(self.contents_manager.is_hidden(entry.path))
                 and not self.contents_manager.allow_hidden
             )
         )
