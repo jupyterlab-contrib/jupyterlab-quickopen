@@ -2,6 +2,28 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 2.0.1
+
+([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/v2.0.0...367d06e09d546089dfe6ea168ba7ccc91f51fcd1))
+
+### Bugs fixed
+
+- Ensure compatibility with both sync and async contents managers [#62](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/62) ([@yjoer](https://github.com/yjoer))
+
+### Documentation improvements
+
+- Add `conda-forge` install to the README [#64](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/64) ([@jtpio](https://github.com/jtpio))
+- add apt.text with wamerican to add /usr/share/dict/words [#60](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/60) ([@fomightez](https://github.com/fomightez))
+- Add ready badge to the README [#59](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/59) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2024-09-30&to=2024-10-09&type=c))
+
+[@fomightez](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Afomightez+updated%3A2024-09-30..2024-10-09&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Agithub-actions+updated%3A2024-09-30..2024-10-09&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ajtpio+updated%3A2024-09-30..2024-10-09&type=Issues) | [@yjoer](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ayjoer+updated%3A2024-09-30..2024-10-09&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 2.0.0
 
 ([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/1.2.0...ec87ceb2cb87900d45db06f265c8ce7034caa876))
@@ -39,8 +61,6 @@ The shortcut to open the Quick Open widget is <kbd>Accel Ctrl P</kbd>. It can al
 ([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2021-12-12&to=2024-09-30&type=c))
 
 [@github-actions](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Agithub-actions+updated%3A2021-12-12..2024-09-30&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ajtpio+updated%3A2021-12-12..2024-09-30&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 1.2.0
 
