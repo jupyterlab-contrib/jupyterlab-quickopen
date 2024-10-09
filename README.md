@@ -27,8 +27,16 @@ https://github.com/user-attachments/assets/49147847-2b98-4016-8a11-5d0e8d9749e1
 
 ## Install
 
+To install the extension with `pip`:
+
 ```bash
 pip install jupyterlab-quickopen
+```
+
+With `conda` / `mamba`:
+
+```bash
+conda install -c conda-forge jupyterlab-quickopen
 ```
 
 ## Configure
