@@ -36,11 +36,13 @@ class QuickOpenHandler(APIHandler):
         -------
         bool
         """
+        relpath = os.path.relpath(entry.path)
+
         return (
             any(fnmatch(entry.name, glob) for glob in excludes)
             or not self.contents_manager.should_list(entry.name)
             or (
-                await ensure_async(self.contents_manager.is_hidden(entry.path))
+                await ensure_async(self.contents_manager.is_hidden(relpath))
                 and not self.contents_manager.allow_hidden
             )
         )
