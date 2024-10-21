@@ -2,6 +2,22 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 2.0.2
+
+([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/v2.0.1...3c730b09842fa5fcc3245890ab96d681d1855047))
+
+### Bugs fixed
+
+- Use a relative path because a path cannot start with a drive letter [#65](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/65) ([@yjoer](https://github.com/yjoer))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2024-10-09&to=2024-10-21&type=c))
+
+[@yjoer](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ayjoer+updated%3A2024-10-09..2024-10-21&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 2.0.1
 
 ([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/v2.0.0...367d06e09d546089dfe6ea168ba7ccc91f51fcd1))
@@ -21,8 +37,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2024-09-30&to=2024-10-09&type=c))
 
 [@fomightez](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Afomightez+updated%3A2024-09-30..2024-10-09&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Agithub-actions+updated%3A2024-09-30..2024-10-09&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ajtpio+updated%3A2024-09-30..2024-10-09&type=Issues) | [@yjoer](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ayjoer+updated%3A2024-09-30..2024-10-09&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 2.0.0
 
