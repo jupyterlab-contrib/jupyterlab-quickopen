@@ -20,17 +20,21 @@ jobs:
           python-version: '3.12'
       - name: Install the dependencies
         run: |
-          python -m pip install jupyterlite-core
-          python -m pip install .
+          python -m pip install -r requirements.txt
+        working-directory: ./demo
+      - name: Clone jupyterlab-demo for example content
+        run: |
+          git clone --depth 1 https://github.com/jupyterlab/jupyterlab-demo
+          rm -rf jupyterlab-demo/.git
+        working-directory: ./demo
       - name: Build the JupyterLite site
         run: |
-          mkdir content
-          cp README.md content
-          jupyter lite build --contents content --output-dir dist
+          jupyter lite build --contents jupyterlab-demo --output-dir dist
+        working-directory: ./demo
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./dist
+          path: ./demo/dist
 
   deploy:
     needs: build
