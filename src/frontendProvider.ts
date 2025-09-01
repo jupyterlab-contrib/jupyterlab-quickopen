@@ -113,7 +113,7 @@ export class FrontendQuickOpenProvider implements IQuickOpenProvider {
     excludes: string[]
   ): boolean {
     for (const exclude of excludes) {
-      // Simple pattern matching - can be enhanced with glob patterns
+      // TODO: support globs instead of simple string matching
       if (
         filename.includes(exclude) ||
         fullPath.includes(exclude) ||
