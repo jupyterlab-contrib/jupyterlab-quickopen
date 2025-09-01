@@ -3,9 +3,8 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { ICommandPalette, ModalCommandPalette } from '@jupyterlab/apputils';
-import { URLExt, PathExt } from '@jupyterlab/coreutils';
+import { PathExt } from '@jupyterlab/coreutils';
 import { IDocumentManager } from '@jupyterlab/docmanager';
-import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { FileBrowser, IDefaultFileBrowser } from '@jupyterlab/filebrowser';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
@@ -14,41 +13,8 @@ import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { Message } from '@lumino/messaging';
 import { ISignal, Signal } from '@lumino/signaling';
 import { CommandPalette } from '@lumino/widgets';
-
-/** Structure of the JSON response from the server */
-interface IQuickOpenResponse {
-  readonly contents: { [key: string]: string[] };
-  readonly scanSeconds: number;
-}
-
-/** Makes a HTTP request for the server-side quick open scan */
-async function fetchContents(
-  path: string,
-  excludes: string[]
-): Promise<IQuickOpenResponse> {
-  const query = excludes
-    .map(exclude => {
-      return 'excludes=' + encodeURIComponent(exclude);
-    })
-    .join('&');
-
-  const settings = ServerConnection.makeSettings();
-  const fullUrl =
-    URLExt.join(settings.baseUrl, 'jupyterlab-quickopen', 'api', 'files') +
-    '?' +
-    query +
-    '&path=' +
-    path;
-  const response = await ServerConnection.makeRequest(
-    fullUrl,
-    { method: 'GET' },
-    settings
-  );
-  if (response.status !== 200) {
-    throw new ServerConnection.ResponseError(response);
-  }
-  return await response.json();
-}
+import { IQuickOpenProvider } from './tokens';
+import { DefaultQuickOpenProvider } from './defaultProvider';
 
 /**
  * Shows files nested under directories in the root notebooks directory configured on the server.
@@ -57,10 +23,12 @@ class QuickOpenWidget extends CommandPalette {
   private _pathSelected = new Signal<this, string>(this);
   private _settings: ReadonlyPartialJSONObject;
   private _fileBrowser: FileBrowser;
+  private _provider: IQuickOpenProvider;
 
   constructor(
     defaultBrowser: IDefaultFileBrowser,
     settings: ReadonlyPartialJSONObject,
+    provider: IQuickOpenProvider,
     options: CommandPalette.IOptions
   ) {
     super(options);
@@ -71,6 +39,7 @@ class QuickOpenWidget extends CommandPalette {
 
     this._settings = settings;
     this._fileBrowser = defaultBrowser;
+    this._provider = provider;
   }
 
   /** Signal when a selected path is activated. */
@@ -93,7 +62,7 @@ class QuickOpenWidget extends CommandPalette {
     const path = this._settings.relativeSearch
       ? this._fileBrowser.model.path
       : '';
-    const response = await fetchContents(
+    const response = await this._provider.fetchContents(
       path,
       this._settings.excludes as string[]
     );
@@ -128,14 +97,21 @@ class QuickOpenWidget extends CommandPalette {
  */
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-quickopen:plugin',
+  description: 'Provides a quick open file dialog',
   autoStart: true,
-  requires: [IDocumentManager, ISettingRegistry, IDefaultFileBrowser],
+  requires: [
+    IDocumentManager,
+    ISettingRegistry,
+    IDefaultFileBrowser,
+    IQuickOpenProvider
+  ],
   optional: [ICommandPalette, ITranslator],
   activate: async (
     app: JupyterFrontEnd,
     docManager: IDocumentManager,
     settingRegistry: ISettingRegistry,
     defaultFileBrowser: IDefaultFileBrowser,
+    provider: IQuickOpenProvider,
     palette: ICommandPalette | null,
     translator: ITranslator | null
   ) => {
@@ -147,6 +123,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     const widget: QuickOpenWidget = new QuickOpenWidget(
       defaultFileBrowser,
       settings.composite,
+      provider,
       {
         commands
       }
@@ -154,7 +131,7 @@ const extension: JupyterFrontEndPlugin<void> = {
 
     // Listen for path selection signals and show the selected files in the appropriate
     // editor/viewer
-    widget.pathSelected.connect((sender: QuickOpenWidget, path: string) => {
+    widget.pathSelected.connect((_sender: QuickOpenWidget, path: string) => {
       docManager.openOrReveal(PathExt.normalize(path));
     });
 
@@ -174,6 +151,12 @@ const extension: JupyterFrontEndPlugin<void> = {
       label: trans.__('Quick Open'),
       execute: () => {
         modalPalette.activate();
+      },
+      describedBy: {
+        args: {
+          type: 'object',
+          properties: {}
+        }
       }
     });
     if (palette) {
@@ -182,4 +165,21 @@ const extension: JupyterFrontEndPlugin<void> = {
   }
 };
 
-export default extension;
+/**
+ * Plugin that provides the default quick open provider
+ */
+const providerPlugin: JupyterFrontEndPlugin<IQuickOpenProvider> = {
+  id: 'jupyterlab-quickopen:provider',
+  description: 'Provides the default quick open provider',
+  autoStart: true,
+  provides: IQuickOpenProvider,
+  activate: (_app: JupyterFrontEnd): IQuickOpenProvider => {
+    return new DefaultQuickOpenProvider();
+  }
+};
+
+// export plugins as defaults
+export default [extension, providerPlugin];
+
+// also export tokens
+export * from './tokens';
