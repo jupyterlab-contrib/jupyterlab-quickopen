@@ -85,7 +85,7 @@ export class FrontendQuickOpenProvider implements IQuickOpenProvider {
             maxDepth,
             currentDepth + 1
           );
-        } else if (item.type === 'file') {
+        } else {
           // Add file to contents under its directory category
           const category = dirPath || '.';
           if (!contents[category]) {
