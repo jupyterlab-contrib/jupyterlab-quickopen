@@ -10,6 +10,7 @@ import { FileBrowser, IDefaultFileBrowser } from '@jupyterlab/filebrowser';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
+import { IDisposable } from '@lumino/disposable';
 import { Message } from '@lumino/messaging';
 import { ISignal, Signal } from '@lumino/signaling';
 import { CommandPalette } from '@lumino/widgets';
@@ -24,6 +25,7 @@ class QuickOpenWidget extends CommandPalette {
   private _settings: ReadonlyPartialJSONObject;
   private _fileBrowser: FileBrowser;
   private _provider: IQuickOpenProvider;
+  private _disposables: IDisposable[] = [];
 
   constructor(
     defaultBrowser: IDefaultFileBrowser,
@@ -53,6 +55,21 @@ class QuickOpenWidget extends CommandPalette {
   }
 
   /**
+   * Dispose of tracked disposables and clean up commands.
+   */
+  dispose(): void {
+    if (this.isDisposed) {
+      return;
+    }
+
+    // Clean up all tracked disposables
+    this._disposables.forEach(disposable => disposable.dispose());
+    this._disposables.length = 0;
+
+    super.dispose();
+  }
+
+  /**
    * Refreshes the widget with the paths of files on the server.
    */
   protected async onActivateRequest(msg: Message): Promise<void> {
@@ -67,7 +84,9 @@ class QuickOpenWidget extends CommandPalette {
       this._settings.excludes as string[]
     );
 
-    // Remove all paths from the view
+    // Clean up previous commands and remove all paths from the view
+    this._disposables.forEach(disposable => disposable.dispose());
+    this._disposables.length = 0;
     this.clearItems();
 
     for (const category in response.contents) {
@@ -75,15 +94,14 @@ class QuickOpenWidget extends CommandPalette {
         // Creates commands that are relative file paths on the server
         const command = `${category}/${fn}`;
         if (!this.commands.hasCommand(command)) {
-          // Only add the command to the registry if it does not yet exist TODO: Track disposables
-          // and remove
-          this.commands.addCommand(command, {
+          const disposable = this.commands.addCommand(command, {
             label: fn,
             execute: () => {
               // Emit a selection signal
               this._pathSelected.emit(command);
             }
           });
+          this._disposables.push(disposable);
         }
         // Make the file visible under its parent directory heading
         this.addItem({ command, category });
