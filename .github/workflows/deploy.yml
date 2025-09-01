@@ -25,7 +25,9 @@ jobs:
       - name: Clone jupyterlab-demo for example content
         run: |
           git clone --depth 1 https://github.com/jupyterlab/jupyterlab-demo
-          rm -rf jupyterlab-demo/.git
+
+          # remove hidden directories
+          rm -rf jupyterlab-demo/.*
         working-directory: ./demo
       - name: Build the JupyterLite site
         run: |
