@@ -6,15 +6,24 @@ export interface IQuickOpenResponse {
   readonly scanSeconds: number;
 }
 
+/** Options for fetching quick open contents */
+export interface IQuickOpenOptions {
+  /** The path to search in */
+  path: string;
+  /** Array of patterns to exclude from results */
+  excludes: string[];
+  /** Maximum directory depth to search (Infinity for unlimited) */
+  depth?: number;
+}
+
 /** Interface for quick open content providers */
 export interface IQuickOpenProvider {
   /**
    * Fetch contents from the provider
-   * @param path The path to search in
-   * @param excludes Array of patterns to exclude
+   * @param options Options for the fetch operation
    * @returns Promise with the response containing file contents
    */
-  fetchContents(path: string, excludes: string[]): Promise<IQuickOpenResponse>;
+  fetchContents(options: IQuickOpenOptions): Promise<IQuickOpenResponse>;
 }
 
 /** Token for the quick open provider */

@@ -5,113 +5,17 @@ import {
 import { ICommandPalette, ModalCommandPalette } from '@jupyterlab/apputils';
 import { PathExt } from '@jupyterlab/coreutils';
 import { IDocumentManager } from '@jupyterlab/docmanager';
+import { IDefaultFileBrowser } from '@jupyterlab/filebrowser';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
-import { FileBrowser, IDefaultFileBrowser } from '@jupyterlab/filebrowser';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import { CommandRegistry } from '@lumino/commands';
-import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
-import { IDisposable } from '@lumino/disposable';
-import { Message } from '@lumino/messaging';
-import { ISignal, Signal } from '@lumino/signaling';
-import { CommandPalette } from '@lumino/widgets';
+import { FrontendQuickOpenProvider } from './frontendProvider';
+import { ServerQuickOpenProvider } from './serverProvider';
 import { IQuickOpenProvider } from './tokens';
-import { DefaultQuickOpenProvider } from './defaultProvider';
+import { QuickOpenWidget } from './widget';
 
 /**
- * Shows files nested under directories in the root notebooks directory configured on the server.
- */
-class QuickOpenWidget extends CommandPalette {
-  private _pathSelected = new Signal<this, string>(this);
-  private _settings: ReadonlyPartialJSONObject;
-  private _fileBrowser: FileBrowser;
-  private _provider: IQuickOpenProvider;
-  private _disposables: IDisposable[] = [];
-
-  constructor(
-    defaultBrowser: IDefaultFileBrowser,
-    settings: ReadonlyPartialJSONObject,
-    provider: IQuickOpenProvider,
-    options: CommandPalette.IOptions
-  ) {
-    super(options);
-
-    this.id = 'jupyterlab-quickopen';
-    this.title.iconClass = 'jp-SideBar-tabIcon jp-SearchIcon';
-    this.title.caption = 'Quick Open';
-
-    this._settings = settings;
-    this._fileBrowser = defaultBrowser;
-    this._provider = provider;
-  }
-
-  /** Signal when a selected path is activated. */
-  get pathSelected(): ISignal<this, string> {
-    return this._pathSelected;
-  }
-
-  /** Current extension settings */
-  set settings(settings: ReadonlyPartialJSONObject) {
-    this._settings = settings;
-  }
-
-  /**
-   * Dispose of tracked disposables and clean up commands.
-   */
-  dispose(): void {
-    if (this.isDisposed) {
-      return;
-    }
-
-    // Clean up all tracked disposables
-    this._disposables.forEach(disposable => disposable.dispose());
-    this._disposables.length = 0;
-
-    super.dispose();
-  }
-
-  /**
-   * Refreshes the widget with the paths of files on the server.
-   */
-  protected async onActivateRequest(msg: Message): Promise<void> {
-    super.onActivateRequest(msg);
-
-    // Fetch the current contents from the server
-    const path = this._settings.relativeSearch
-      ? this._fileBrowser.model.path
-      : '';
-    const response = await this._provider.fetchContents(
-      path,
-      this._settings.excludes as string[]
-    );
-
-    // Clean up previous commands and remove all paths from the view
-    this._disposables.forEach(disposable => disposable.dispose());
-    this._disposables.length = 0;
-    this.clearItems();
-
-    for (const category in response.contents) {
-      for (const fn of response.contents[category]) {
-        // Creates commands that are relative file paths on the server
-        const command = `${category}/${fn}`;
-        if (!this.commands.hasCommand(command)) {
-          const disposable = this.commands.addCommand(command, {
-            label: fn,
-            execute: () => {
-              // Emit a selection signal
-              this._pathSelected.emit(command);
-            }
-          });
-          this._disposables.push(disposable);
-        }
-        // Make the file visible under its parent directory heading
-        this.addItem({ command, category });
-      }
-    }
-  }
-}
-
-/**
- * Initialization data for the jupyterlab-quickopen extension.
+ * The main quickopen plugin.
  */
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-quickopen:plugin',
@@ -147,23 +51,17 @@ const extension: JupyterFrontEndPlugin<void> = {
       }
     );
 
-    // Listen for path selection signals and show the selected files in the appropriate
-    // editor/viewer
     widget.pathSelected.connect((_sender: QuickOpenWidget, path: string) => {
       docManager.openOrReveal(PathExt.normalize(path));
     });
 
-    // Listen for setting changes and apply them to the widget
     settings.changed.connect((settings: ISettingRegistry.ISettings) => {
       widget.settings = settings.composite;
     });
 
-    // Add the quick open widget as a modal palette
     const modalPalette = new ModalCommandPalette({ commandPalette: widget });
     modalPalette.attach();
 
-    // Add a command to activate the quickopen sidebar so that the user can find it in the command
-    // palette, assign a hotkey, etc.
     const command = 'quickopen:activate';
     app.commands.addCommand(command, {
       label: trans.__('Quick Open'),
@@ -177,6 +75,7 @@ const extension: JupyterFrontEndPlugin<void> = {
         }
       }
     });
+
     if (palette) {
       palette.addItem({ command, category: 'File Operations' });
     }
@@ -184,15 +83,47 @@ const extension: JupyterFrontEndPlugin<void> = {
 };
 
 /**
- * Plugin that provides the default quick open provider
+ * Plugin that provides the quick open provider
  */
 const providerPlugin: JupyterFrontEndPlugin<IQuickOpenProvider> = {
   id: 'jupyterlab-quickopen:provider',
-  description: 'Provides the default quick open provider',
+  description: 'Provides the quick open provider',
   autoStart: true,
   provides: IQuickOpenProvider,
-  activate: (_app: JupyterFrontEnd): IQuickOpenProvider => {
-    return new DefaultQuickOpenProvider();
+  requires: [ISettingRegistry],
+  activate: (
+    app: JupyterFrontEnd,
+    settingRegistry: ISettingRegistry
+  ): IQuickOpenProvider => {
+    let currentProvider: IQuickOpenProvider = new ServerQuickOpenProvider();
+
+    const updateProvider = async () => {
+      const settings = await settingRegistry.load(
+        'jupyterlab-quickopen:plugin'
+      );
+      const indexingMethod = settings.get('indexingMethod').composite as string;
+
+      if (indexingMethod === 'frontend') {
+        currentProvider = new FrontendQuickOpenProvider({
+          contentsManager: app.serviceManager.contents
+        });
+      } else {
+        currentProvider = new ServerQuickOpenProvider();
+      }
+    };
+
+    updateProvider();
+
+    settingRegistry.load('jupyterlab-quickopen:plugin').then(settings => {
+      settings.changed.connect(updateProvider);
+    });
+
+    // Return a wrapper that delegates to the current provider
+    return {
+      fetchContents: options => {
+        return currentProvider.fetchContents(options);
+      }
+    };
   }
 };
 

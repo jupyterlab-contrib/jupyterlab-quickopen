@@ -178,7 +178,8 @@
         "node_modules",
         "dist",
         "coverage",
-        "**/*.d.ts"
+        "**/*.d.ts",
+        ".venv"
     ],
     "prettier": {
         "singleQuote": true,

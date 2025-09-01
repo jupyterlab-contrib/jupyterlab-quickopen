@@ -1,0 +1,56 @@
+import { URLExt } from '@jupyterlab/coreutils';
+import { ServerConnection } from '@jupyterlab/services';
+import {
+  IQuickOpenProvider,
+  IQuickOpenResponse,
+  IQuickOpenOptions
+} from './tokens';
+
+/**
+ * Default implementation of the quick open provider that the server endpoint.
+ */
+export class ServerQuickOpenProvider implements IQuickOpenProvider {
+  /**
+   * Fetch contents from the server endpoint.
+   */
+  async fetchContents(options: IQuickOpenOptions): Promise<IQuickOpenResponse> {
+    const { path, excludes, depth } = options;
+    console.log(
+      'Debug: ServerProvider received depth =',
+      depth,
+      'typeof =',
+      typeof depth
+    );
+    const queryParams = excludes.map(
+      exclude => 'excludes=' + encodeURIComponent(exclude)
+    );
+
+    console.log('Debug: depth !== undefined?', depth !== undefined);
+    console.log('Debug: depth !== Infinity?', depth !== Infinity);
+    if (depth !== undefined && depth !== Infinity) {
+      console.log('Debug: Adding depth to query params, depth =', depth);
+      queryParams.push('depth=' + depth);
+    } else {
+      console.log('Debug: NOT adding depth to query params');
+    }
+
+    const query = queryParams.join('&');
+
+    const settings = ServerConnection.makeSettings();
+    const fullUrl =
+      URLExt.join(settings.baseUrl, 'jupyterlab-quickopen', 'api', 'files') +
+      '?' +
+      query +
+      '&path=' +
+      path;
+    const response = await ServerConnection.makeRequest(
+      fullUrl,
+      { method: 'GET' },
+      settings
+    );
+    if (response.status !== 200) {
+      throw new ServerConnection.ResponseError(response);
+    }
+    return await response.json();
+  }
+}

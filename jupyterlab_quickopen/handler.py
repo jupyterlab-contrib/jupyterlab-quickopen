@@ -47,14 +47,16 @@ class QuickOpenHandler(APIHandler):
             )
         )
 
-    async def scan_disk(self, path, excludes, on_disk=None):
+    async def scan_disk(self, path, excludes, on_disk=None, max_depth=None, current_depth=0):
         if on_disk is None:
             on_disk = {}
+        if max_depth is not None and current_depth >= max_depth:
+            return on_disk
         for entry in os.scandir(path):
             if await self.should_hide(entry, excludes):
                 continue
             elif entry.is_dir():
-                await self.scan_disk(entry.path, excludes, on_disk)
+                await self.scan_disk(entry.path, excludes, on_disk, max_depth, current_depth + 1)
             elif entry.is_file():
                 parent = os.path.relpath(os.path.dirname(entry.path), self.root_dir)
                 on_disk.setdefault(parent, []).append(entry.name)
@@ -78,12 +80,14 @@ class QuickOpenHandler(APIHandler):
         """
         excludes = set(self.get_arguments("excludes"))
         current_path = self.get_argument("path")
+        depth_arg = self.get_argument("depth", default=None)
+        max_depth = int(depth_arg) if depth_arg is not None else None
         start_ts = time.time()
         if current_path:
             full_path = os.path.join(self.root_dir, current_path)
         else:
             full_path = self.root_dir
-        contents_by_path = await self.scan_disk(full_path, excludes)
+        contents_by_path = await self.scan_disk(full_path, excludes, max_depth=max_depth)
         delta_ts = time.time() - start_ts
         self.write(
             json_encode({"scan_seconds": delta_ts, "contents": contents_by_path})
