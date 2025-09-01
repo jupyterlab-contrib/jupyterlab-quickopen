@@ -10,12 +10,9 @@ import { IQuickOpenProvider } from './tokens';
  * Shows files nested under directories in the root notebooks directory configured on the server.
  */
 export class QuickOpenWidget extends CommandPalette {
-  private _pathSelected = new Signal<this, string>(this);
-  private _settings: ReadonlyPartialJSONObject;
-  private _fileBrowser: IDefaultFileBrowser;
-  private _provider: IQuickOpenProvider;
-  private _disposables: IDisposable[] = [];
-
+  /**
+   * Create a new QuickOpenWidget.
+   */
   constructor(
     defaultBrowser: IDefaultFileBrowser,
     settings: ReadonlyPartialJSONObject,
@@ -68,15 +65,7 @@ export class QuickOpenWidget extends CommandPalette {
     const path = this._settings.relativeSearch
       ? this._fileBrowser.model.path
       : '';
-    console.log('Debug: Full settings object =', this._settings);
-    console.log(
-      'Debug: this._settings.depth =',
-      this._settings.depth,
-      'typeof =',
-      typeof this._settings.depth
-    );
     const depth = this._settings.depth as number;
-    console.log('Debug: depth after cast =', depth, 'typeof =', typeof depth);
     const response = await this._provider.fetchContents({
       path,
       excludes: this._settings.excludes as string[],
@@ -107,4 +96,10 @@ export class QuickOpenWidget extends CommandPalette {
       }
     }
   }
+
+  private _pathSelected = new Signal<this, string>(this);
+  private _settings: ReadonlyPartialJSONObject;
+  private _fileBrowser: IDefaultFileBrowser;
+  private _provider: IQuickOpenProvider;
+  private _disposables: IDisposable[] = [];
 }

@@ -15,23 +15,12 @@ export class ServerQuickOpenProvider implements IQuickOpenProvider {
    */
   async fetchContents(options: IQuickOpenOptions): Promise<IQuickOpenResponse> {
     const { path, excludes, depth } = options;
-    console.log(
-      'Debug: ServerProvider received depth =',
-      depth,
-      'typeof =',
-      typeof depth
-    );
     const queryParams = excludes.map(
       exclude => 'excludes=' + encodeURIComponent(exclude)
     );
 
-    console.log('Debug: depth !== undefined?', depth !== undefined);
-    console.log('Debug: depth !== Infinity?', depth !== Infinity);
     if (depth !== undefined && depth !== Infinity) {
-      console.log('Debug: Adding depth to query params, depth =', depth);
       queryParams.push('depth=' + depth);
-    } else {
-      console.log('Debug: NOT adding depth to query params');
     }
 
     const query = queryParams.join('&');
