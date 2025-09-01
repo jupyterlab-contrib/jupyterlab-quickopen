@@ -17,7 +17,7 @@ import { QuickOpenWidget } from './widget';
 /**
  * The main quickopen plugin.
  */
-const extension: JupyterFrontEndPlugin<void> = {
+const quickopenPlugin: JupyterFrontEndPlugin<void> = {
   id: 'jupyterlab-quickopen:plugin',
   description: 'Provides a quick open file dialog',
   autoStart: true,
@@ -40,7 +40,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     const trans = (translator ?? nullTranslator).load('jupyterlab-quickopen');
     const commands: CommandRegistry = new CommandRegistry();
     const settings: ISettingRegistry.ISettings = await settingRegistry.load(
-      extension.id
+      quickopenPlugin.id
     );
     const widget: QuickOpenWidget = new QuickOpenWidget(
       defaultFileBrowser,
@@ -90,33 +90,34 @@ const providerPlugin: JupyterFrontEndPlugin<IQuickOpenProvider> = {
   description: 'Provides the quick open provider',
   autoStart: true,
   provides: IQuickOpenProvider,
-  requires: [ISettingRegistry],
+  optional: [ISettingRegistry],
   activate: (
     app: JupyterFrontEnd,
     settingRegistry: ISettingRegistry
   ): IQuickOpenProvider => {
     let currentProvider: IQuickOpenProvider = new ServerQuickOpenProvider();
 
-    const updateProvider = async () => {
-      const settings = await settingRegistry.load(
-        'jupyterlab-quickopen:plugin'
-      );
-      const indexingMethod = settings.get('indexingMethod').composite as string;
+    if (settingRegistry) {
+      void Promise.all([
+        settingRegistry.load(quickopenPlugin.id),
+        app.restored
+      ]).then(([settings]) => {
+        const updateProvider = () => {
+          const indexingMethod = settings.get('indexingMethod')
+            .composite as string;
 
-      if (indexingMethod === 'frontend') {
-        currentProvider = new FrontendQuickOpenProvider({
-          contentsManager: app.serviceManager.contents
-        });
-      } else {
-        currentProvider = new ServerQuickOpenProvider();
-      }
-    };
-
-    updateProvider();
-
-    settingRegistry.load('jupyterlab-quickopen:plugin').then(settings => {
-      settings.changed.connect(updateProvider);
-    });
+          if (indexingMethod === 'frontend') {
+            currentProvider = new FrontendQuickOpenProvider({
+              contentsManager: app.serviceManager.contents
+            });
+          } else {
+            currentProvider = new ServerQuickOpenProvider();
+          }
+        };
+        updateProvider();
+        settings.changed.connect(updateProvider);
+      });
+    }
 
     // Return a wrapper that delegates to the current provider
     return {
@@ -128,7 +129,7 @@ const providerPlugin: JupyterFrontEndPlugin<IQuickOpenProvider> = {
 };
 
 // export plugins as defaults
-export default [extension, providerPlugin];
+export default [quickopenPlugin, providerPlugin];
 
 // also export tokens
 export * from './tokens';
