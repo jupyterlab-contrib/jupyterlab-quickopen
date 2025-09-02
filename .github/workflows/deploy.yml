@@ -1,0 +1,56 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the dependencies
+        run: |
+          python -m pip install -r requirements.txt
+        working-directory: ./demo
+      - name: Clone jupyterlab-demo for example content
+        run: |
+          git clone --depth 1 https://github.com/jupyterlab/jupyterlab-demo
+
+          # remove hidden directories
+          rm -rf jupyterlab-demo/.*
+        working-directory: ./demo
+      - name: Build the JupyterLite site
+        run: |
+          jupyter lite build --contents jupyterlab-demo --output-dir dist
+        working-directory: ./demo
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./demo/dist
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

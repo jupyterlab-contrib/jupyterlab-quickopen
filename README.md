@@ -80,6 +80,23 @@ area to override the default values.
 
 ![Screenshot of the quick open settings editor](./doc/settings.png)
 
+### JupyterLite
+
+This extension is compatible with JupyterLite when using the client-side indexing mode. Open the
+_Advanced Settings Editor_ (_Settings → Advanced Settings Editor_), select the _Quick Open_ settings
+and set the `indexingMethod` to `"frontend"`. That enables the extension to index files via the
+JupyterLab Contents API on the client (suitable for JupyterLite deployments).
+
+You can add the following `overrides.json` file before building your JupyterLite site:
+
+```json
+{
+  "jupyterlab-quickopen:plugin": {
+    "indexingMethod": "frontend"
+  }
+}
+```
+
 ### Development install
 
 Note: You will need NodeJS to build the extension package.

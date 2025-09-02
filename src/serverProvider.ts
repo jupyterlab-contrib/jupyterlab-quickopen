@@ -1,20 +1,29 @@
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
-import { IQuickOpenProvider, IQuickOpenResponse } from './tokens';
+import {
+  IQuickOpenProvider,
+  IQuickOpenResponse,
+  IQuickOpenOptions
+} from './tokens';
 
 /**
  * Default implementation of the quick open provider that the server endpoint.
  */
-export class DefaultQuickOpenProvider implements IQuickOpenProvider {
-  async fetchContents(
-    path: string,
-    excludes: string[]
-  ): Promise<IQuickOpenResponse> {
-    const query = excludes
-      .map(exclude => {
-        return 'excludes=' + encodeURIComponent(exclude);
-      })
-      .join('&');
+export class ServerQuickOpenProvider implements IQuickOpenProvider {
+  /**
+   * Fetch contents from the server endpoint.
+   */
+  async fetchContents(options: IQuickOpenOptions): Promise<IQuickOpenResponse> {
+    const { path, excludes, depth } = options;
+    const queryParams = excludes.map(
+      exclude => 'excludes=' + encodeURIComponent(exclude)
+    );
+
+    if (depth !== undefined && depth !== Infinity) {
+      queryParams.push('depth=' + depth);
+    }
+
+    const query = queryParams.join('&');
 
     const settings = ServerConnection.makeSettings();
     const fullUrl =

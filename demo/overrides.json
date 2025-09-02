@@ -1,0 +1,5 @@
+{
+  "jupyterlab-quickopen:plugin": {
+    "indexingMethod": "frontend"
+  }
+}

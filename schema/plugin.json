@@ -16,6 +16,20 @@
       "description": "Whether to search from currently selected directory",
       "type": "boolean",
       "default": false
+    },
+    "indexingMethod": {
+      "title": "Indexing Method",
+      "description": "Method to use for file indexing: 'server' uses the backend endpoint, 'frontend' uses the JupyterLab Contents API",
+      "type": "string",
+      "enum": ["server", "frontend"],
+      "default": "server"
+    },
+    "depth": {
+      "title": "Search Depth",
+      "description": "Maximum directory depth to search",
+      "type": "number",
+      "minimum": 1,
+      "default": 20
     }
   },
   "jupyter.lab.menus": {
