@@ -2,6 +2,33 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 2.1.0
+
+([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/v2.0.2...771dd0923dca17ffd240385205f3ce38a674291d))
+
+### Enhancements made
+
+- Allow for frontend driven indexing [#71](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/71) ([@jtpio](https://github.com/jtpio))
+- Extract server functionality to a separate plugin [#69](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/69) ([@jtpio](https://github.com/jtpio))
+
+### Maintenance and upkeep improvements
+
+- Better handling of disposable [#70](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/70) ([@jtpio](https://github.com/jtpio))
+- Add `packageManager` to package.json [#67](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/67) ([@jtpio](https://github.com/jtpio))
+- Bump cross-spawn from 6.0.5 to 6.0.6 [#66](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/66) ([@dependabot](https://github.com/dependabot))
+
+### Documentation improvements
+
+- Add JupyterLite badge to README [#73](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/73) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2024-10-21&to=2025-09-02&type=c))
+
+[@dependabot](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Adependabot+updated%3A2024-10-21..2025-09-02&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Agithub-actions+updated%3A2024-10-21..2025-09-02&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ajtpio+updated%3A2024-10-21..2025-09-02&type=Issues)
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 2.0.2
 
 ([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/v2.0.1...3c730b09842fa5fcc3245890ab96d681d1855047))
@@ -15,8 +42,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2024-10-09&to=2024-10-21&type=c))
 
 [@yjoer](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ayjoer+updated%3A2024-10-09..2024-10-21&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 2.0.1
 
