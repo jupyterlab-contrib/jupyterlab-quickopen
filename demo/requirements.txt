@@ -1,3 +1,4 @@
 jupyterlite-core
 jupyterlite-pyodide-kernel
+notebook
 ..
