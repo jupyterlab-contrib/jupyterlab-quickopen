@@ -9,7 +9,18 @@
       "description": "File and directory patterns to exclude from the list",
       "type": "array",
       "items": { "type": "string" },
-      "default": ["node_modules", "__pycache__"]
+      "default": [
+        "node_modules",
+        "__pycache__",
+        ".venv",
+        "venv",
+        ".ipynb_checkpoints",
+        ".tox",
+        ".mypy_cache",
+        ".pytest_cache",
+        ".ruff_cache",
+        ".DS_Store"
+      ]
     },
     "relativeSearch": {
       "title": "Relative Search",
