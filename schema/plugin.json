@@ -41,6 +41,12 @@
       "type": "number",
       "minimum": 1,
       "default": 20
+    },
+    "respectGitignore": {
+      "title": "Respect .gitignore",
+      "description": "Skip files and directories matched by .gitignore patterns. In 'frontend' indexing mode this requires the Jupyter Server to allow listing hidden files (ContentsManager.allow_hidden=True), since .gitignore files are themselves hidden.",
+      "type": "boolean",
+      "default": false
     }
   },
   "jupyter.lab.menus": {

@@ -69,7 +69,8 @@ export class QuickOpenWidget extends CommandPalette {
     const response = await this._provider.fetchContents({
       path,
       excludes: this._settings.excludes as string[],
-      depth: depth
+      depth: depth,
+      respectGitignore: this._settings.respectGitignore as boolean
     });
 
     // Clean up previous commands and remove all paths from the view

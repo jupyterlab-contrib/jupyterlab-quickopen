@@ -3,7 +3,7 @@ from pathlib import Path
 
 from jupyter_server.utils import url_path_join
 
-from .handler import QuickOpenHandler
+from .handler import QuickOpenHandler, pathspec
 
 try:
     from ._version import __version__
@@ -57,3 +57,9 @@ def _load_jupyter_server_extension(server_app) -> None:
         f"Registered QuickOpenHandler extension at URL path {route_pattern} "
         f"to serve results of scanning local path {server_app.notebook_dir}"
     )
+    if pathspec is None:
+        server_app.log.warning(
+            "The 'pathspec' package is not installed; the 'respectGitignore' "
+            "setting will have no effect. Install with 'pip install pathspec' "
+            "to enable .gitignore filtering."
+        )

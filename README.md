@@ -81,6 +81,39 @@ area to override the default values.
 
 ![Screenshot of the quick open settings editor](./doc/settings.png)
 
+### Honoring `.gitignore`
+
+In addition to static exclude patterns, the extension can skip files and directories matched by
+`.gitignore` files in the workspace. The feature is opt-in — enable it in the _Quick Open_
+settings:
+
+```json
+{
+  "respectGitignore": true
+}
+```
+
+Behavior when enabled:
+
+- Each `.gitignore` is interpreted relative to the directory it lives in, mirroring git's own
+  semantics (e.g., `nested/.gitignore` only applies inside `nested/`).
+- The `.git` directory itself is always skipped (it isn't normally listed in `.gitignore`).
+- Only `.gitignore` files inside the scanned tree are honored. Global gitignore
+  (`~/.config/git/ignore`) and `.git/info/exclude` are not consulted.
+- Pattern matching uses [`pathspec`](https://pypi.org/project/pathspec/) on the server and
+  [`ignore`](https://www.npmjs.com/package/ignore) on the frontend, both implementing
+  `gitwildmatch` semantics including negation (`!pattern`) and directory-only patterns (`foo/`).
+
+The setting works with both indexing modes, with one caveat:
+
+- **Server mode** (default): works regardless of server configuration — `.gitignore` is read
+  directly from disk.
+- **Frontend mode** (used in JupyterLite and similar setups): the Jupyter Server must allow
+  listing hidden files, since `.gitignore` is itself a hidden file. Set
+  `ContentsManager.allow_hidden = True` in your `jupyter_server_config.py` (or pass
+  `--ContentsManager.allow_hidden=True` on the command line). Without this, the frontend cannot
+  see `.gitignore` files and the option silently has no effect.
+
 ### JupyterLite
 
 This extension is compatible with JupyterLite when using the client-side indexing mode. Open the
