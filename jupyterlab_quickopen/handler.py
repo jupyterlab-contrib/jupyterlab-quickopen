@@ -162,7 +162,14 @@ class QuickOpenHandler(APIHandler):
             "respect_gitignore", default=""
         ).lower() in ("1", "true")
         start_ts = time.time()
-        full_path = os.path.join(self.root_dir, current_path) if current_path else self.root_dir
+        root_dir = os.path.abspath(self.root_dir)
+        if current_path and os.path.splitdrive(current_path)[0]:
+            raise web.HTTPError(404, f"{current_path} is not a relative path")
+        full_path = os.path.abspath(os.path.join(root_dir, current_path))
+        if os.path.dirname(root_dir) != root_dir and not (full_path + os.sep).startswith(
+            root_dir + os.sep
+        ):
+            raise web.HTTPError(404, f"{current_path} is outside the root contents directory")
         contents_by_path = await self.scan_disk(
             full_path,
             excludes,
