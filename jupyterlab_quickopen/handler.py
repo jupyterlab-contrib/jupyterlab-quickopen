@@ -2,15 +2,11 @@ import os
 import time
 from fnmatch import fnmatch
 
+import pathspec
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import ensure_async
 from tornado import web
 from tornado.escape import json_encode
-
-try:
-    import pathspec
-except ImportError:
-    pathspec = None
 
 
 GITIGNORE_FILENAME = ".gitignore"
@@ -57,11 +53,8 @@ class QuickOpenHandler(APIHandler):
     def _load_gitignore(self, directory: str):
         """Read a .gitignore file in the given directory and return a PathSpec.
 
-        Returns None if no .gitignore exists, the file cannot be read, or
-        the pathspec library is not installed.
+        Returns None if no .gitignore exists or the file cannot be read.
         """
-        if pathspec is None:
-            return None
         gitignore_path = os.path.join(directory, GITIGNORE_FILENAME)
         if not os.path.isfile(gitignore_path):
             return None
@@ -90,14 +83,11 @@ class QuickOpenHandler(APIHandler):
             # pathspec's gitwildmatch expects POSIX-style separators
             rel = rel.replace(os.sep, "/")
             check_path = rel + "/" if is_dir else rel
+            # include is True (positive match), False (negation/re-include),
+            # or None (no pattern matched — leave state as-is).
             result = spec.check_file(check_path)
-            # include=True  => matched a positive pattern (ignore)
-            # include=False => matched a negation pattern (re-include)
-            # include=None  => no pattern matched, leave state as-is
-            if result.include is True:
-                ignored = True
-            elif result.include is False:
-                ignored = False
+            if result.include is not None:
+                ignored = result.include
         return ignored
 
     async def scan_disk(
@@ -172,7 +162,7 @@ class QuickOpenHandler(APIHandler):
         max_depth = int(depth_arg) if depth_arg is not None else None
         respect_gitignore = self.get_argument(
             "respect_gitignore", default=""
-        ).lower() in ("1", "true") and pathspec is not None
+        ).lower() in ("1", "true")
         start_ts = time.time()
         full_path = os.path.join(self.root_dir, current_path) if current_path else self.root_dir
         contents_by_path = await self.scan_disk(
