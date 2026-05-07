@@ -1,6 +1,5 @@
 import os
 import time
-
 from fnmatch import fnmatch
 
 from jupyter_server.base.handlers import APIHandler
@@ -16,11 +15,11 @@ class QuickOpenHandler(APIHandler):
         return self.settings["contents_manager"]
 
     @property
-    def root_dir(self):
+    def root_dir(self) -> str:
         """Root directory to scan."""
         return self.contents_manager.root_dir
 
-    async def should_hide(self, entry, excludes):
+    async def should_hide(self, entry: os.DirEntry, excludes: set[str]) -> bool:
         """Decides if a file or directory should be hidden from the search results based on
         the `allow_hidden` and `hide_globs` properties of the ContentsManager, as well as a
         set of exclude patterns included in the client request.
@@ -47,7 +46,14 @@ class QuickOpenHandler(APIHandler):
             )
         )
 
-    async def scan_disk(self, path, excludes, on_disk=None, max_depth=None, current_depth=0):
+    async def scan_disk(
+        self,
+        path: str,
+        excludes: set[str],
+        on_disk: dict[str, list[str]] | None = None,
+        max_depth: int | None = None,
+        current_depth: int = 0,
+    ) -> dict[str, list[str]]:
         if on_disk is None:
             on_disk = {}
         if max_depth is not None and current_depth >= max_depth:
@@ -63,7 +69,7 @@ class QuickOpenHandler(APIHandler):
         return on_disk
 
     @web.authenticated
-    async def get(self):
+    async def get(self) -> None:
         """Gets the name of every file under the root notebooks directory binned by parent
         folder relative to the root notebooks dir.
 
@@ -83,12 +89,7 @@ class QuickOpenHandler(APIHandler):
         depth_arg = self.get_argument("depth", default=None)
         max_depth = int(depth_arg) if depth_arg is not None else None
         start_ts = time.time()
-        if current_path:
-            full_path = os.path.join(self.root_dir, current_path)
-        else:
-            full_path = self.root_dir
+        full_path = os.path.join(self.root_dir, current_path) if current_path else self.root_dir
         contents_by_path = await self.scan_disk(full_path, excludes, max_depth=max_depth)
         delta_ts = time.time() - start_ts
-        self.write(
-            json_encode({"scan_seconds": delta_ts, "contents": contents_by_path})
-        )
+        self.write(json_encode({"scan_seconds": delta_ts, "contents": contents_by_path}))

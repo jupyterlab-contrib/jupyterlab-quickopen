@@ -122,3 +122,7 @@ dmypy.json
 
 # JupyterLab upgrade script
 _temp_extension
+
+# Jupyter runtime files
+.jupyter/
+.jupyter_ystore.db

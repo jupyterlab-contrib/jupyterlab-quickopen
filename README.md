@@ -10,7 +10,7 @@ https://github.com/user-attachments/assets/77567c89-ad52-4be8-b0e4-612700353242
 
 ## Compatibility
 
-- Python >=3.8.x
+- Python >=3.10
 - [JupyterLab](https://github.com/jupyterlab/jupyterlab) >=3.2
 - [Jupyter Server](https://github.com/jupyter/jupyter_server) >=2.4
 - Configurations where notebook documents and other files reside on a filesystem local to the
