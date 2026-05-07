@@ -114,6 +114,12 @@ The setting works with both indexing modes, with one caveat:
   `--ContentsManager.allow_hidden=True` on the command line). Without this, the frontend cannot
   see `.gitignore` files and the option silently has no effect.
 
+> [!TIP]
+> The gitignore feature works without showing `.gitignore` in the file browser. If you'd
+> also like to view or edit your `.gitignore` from JupyterLab, enable _Show Hidden Files_
+> from the _View_ menu (or the file browser's overflow menu) in addition to the server-side
+> `ContentsManager.allow_hidden` setting above.
+
 ### JupyterLite
 
 This extension is compatible with JupyterLite when using the client-side indexing mode. Open the
