@@ -50,21 +50,24 @@ class QuickOpenHandler(APIHandler):
             )
         )
 
-    def _load_gitignore(self, directory: str):
+    def _load_gitignore(self, directory: str) -> pathspec.PathSpec | None:
         """Read a .gitignore file in the given directory and return a PathSpec.
 
         Returns None if no .gitignore exists or the file cannot be read.
         """
         gitignore_path = os.path.join(directory, GITIGNORE_FILENAME)
-        if not os.path.isfile(gitignore_path):
-            return None
         try:
             with open(gitignore_path, "r", encoding="utf-8") as f:
                 return pathspec.PathSpec.from_lines("gitwildmatch", f)
         except (OSError, UnicodeDecodeError):
             return None
 
-    def _matches_gitignore(self, specs: list, entry_path: str, is_dir: bool) -> bool:
+    def _matches_gitignore(
+        self,
+        specs: list[tuple[str, pathspec.PathSpec]],
+        entry_path: str,
+        is_dir: bool,
+    ) -> bool:
         """Return True if entry_path is ignored by the active .gitignore stack.
 
         Specs are ordered outermost to innermost. Each spec's patterns are
@@ -74,14 +77,8 @@ class QuickOpenHandler(APIHandler):
         """
         ignored = False
         for base_dir, spec in specs:
-            try:
-                rel = os.path.relpath(entry_path, base_dir)
-            except ValueError:
-                continue
-            if rel.startswith(".."):
-                continue
             # pathspec's gitwildmatch expects POSIX-style separators
-            rel = rel.replace(os.sep, "/")
+            rel = os.path.relpath(entry_path, base_dir).replace(os.sep, "/")
             check_path = rel + "/" if is_dir else rel
             # include is True (positive match), False (negation/re-include),
             # or None (no pattern matched — leave state as-is).
@@ -98,20 +95,21 @@ class QuickOpenHandler(APIHandler):
         max_depth: int | None = None,
         current_depth: int = 0,
         respect_gitignore: bool = False,
-        gitignore_specs: list | None = None,
+        gitignore_specs: list[tuple[str, pathspec.PathSpec]] | None = None,
     ) -> dict[str, list[str]]:
         if on_disk is None:
             on_disk = {}
         if gitignore_specs is None:
             gitignore_specs = []
 
+        if max_depth is not None and current_depth >= max_depth:
+            return on_disk
+
         if respect_gitignore:
             spec = self._load_gitignore(path)
             if spec is not None:
                 gitignore_specs = gitignore_specs + [(path, spec)]
 
-        if max_depth is not None and current_depth >= max_depth:
-            return on_disk
         for entry in os.scandir(path):
             is_dir = entry.is_dir()
             if respect_gitignore and (
