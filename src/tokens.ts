@@ -16,9 +16,8 @@ export interface IQuickOpenOptions {
   depth?: number;
   /**
    * Whether to skip entries matched by .gitignore files.
-   * In frontend indexing mode this requires the Jupyter Server to allow
-   * listing hidden files (ContentsManager.allow_hidden=True), since
-   * .gitignore files are themselves hidden.
+   * In frontend indexing mode this requires the Contents API to expose
+   * hidden files, since .gitignore files are themselves hidden.
    */
   respectGitignore?: boolean;
 }

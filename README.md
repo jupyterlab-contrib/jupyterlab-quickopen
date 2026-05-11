@@ -106,36 +106,55 @@ Behavior when enabled:
 
 The setting works with both indexing modes (configured by `indexingMethod`, see below), with one caveat:
 
-- **Server mode** (default): works regardless of server configuration — `.gitignore` is read
-  directly from disk.
-- **Frontend mode** (used in JupyterLite and similar setups): the Jupyter Server must allow
-  listing hidden files, since `.gitignore` is itself a hidden file. Set
-  `ContentsManager.allow_hidden = True` in your `jupyter_server_config.py` (or pass
-  `--ContentsManager.allow_hidden=True` on the command line). Without this, the frontend cannot
-  see `.gitignore` files and the option silently has no effect.
+- **Server mode** (default): does not need additional server configuration; `.gitignore` is
+  read directly from disk.
+- **Frontend mode** (usually used in JupyterLite and similar setups): the Contents API must allow
+  listing hidden files, since `.gitignore` is itself a hidden file. For Jupyter Server-backed
+  Contents API deployments, set `ContentsManager.allow_hidden = True` in your
+  `jupyter_server_config.py` (or pass `--ContentsManager.allow_hidden=True` on the command line).
+  For prebuilt JupyterLite content, configure this at build time in `jupyter_lite_config.json` as
+  shown below. Without access to hidden files through the Contents API, the frontend cannot see
+  `.gitignore` files and the option silently has no effect.
 
 > [!TIP]
 > The gitignore feature works without showing `.gitignore` in the file browser. If you'd
 > also like to view or edit your `.gitignore` from JupyterLab, enable _Show Hidden Files_
-> from the _View_ menu (or the file browser's overflow menu) in addition to the server-side
-> `ContentsManager.allow_hidden` setting above.
+> from the _View_ menu (or the file browser's overflow menu). This UI setting is separate
+> from allowing hidden files through the Contents API.
 
 ### JupyterLite
 
 This extension is compatible with JupyterLite when using the client-side indexing mode. Open the
 _Advanced Settings Editor_ (_Settings → Advanced Settings Editor_), select the _Quick Open_ settings
-and set the `indexingMethod` to `"frontend"`. That enables the extension to index files via the
-JupyterLab Contents API on the client (suitable for JupyterLite deployments).
+and set the `indexingMethod` to `"frontend"`. To honor `.gitignore` files, also enable
+`respectGitignore`.
 
 You can add the following `overrides.json` file before building your JupyterLite site:
 
 ```json
 {
   "jupyterlab-quickopen:plugin": {
-    "indexingMethod": "frontend"
+    "indexingMethod": "frontend",
+    "respectGitignore": true
   }
 }
 ```
+
+If your JupyterLite site ships prebuilt content with `.gitignore` files, also include hidden files
+in the generated Contents API responses by adding the following `jupyter_lite_config.json` before
+building:
+
+```json
+{
+  "ContentsManager": {
+    "allow_hidden": true
+  }
+}
+```
+
+This is JupyterLite build configuration, not runtime `jupyter_server_config.py` configuration. The
+file browser still hides dotfiles by default; use the _Show Hidden Files_ setting only if you want
+users to see `.gitignore` in the file browser.
 
 ### Development install
 

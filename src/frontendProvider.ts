@@ -142,9 +142,9 @@ export class FrontendQuickOpenProvider implements IQuickOpenProvider {
   /**
    * Read the .gitignore file in the given directory if listed, and parse it.
    *
-   * Requires the server's ContentsManager to allow listing hidden files
-   * (allow_hidden=True) since .gitignore is dot-prefixed; if it isn't visible
-   * in the directory listing, no spec is returned.
+   * Requires the Contents API to expose hidden files since .gitignore is
+   * dot-prefixed; if it isn't visible in the directory listing, no spec is
+   * returned.
    */
   private async _loadGitignore(
     dirPath: string,

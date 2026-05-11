@@ -44,7 +44,7 @@
     },
     "respectGitignore": {
       "title": "Respect .gitignore",
-      "description": "Skip files and directories matched by .gitignore patterns. In 'frontend' indexing mode this requires the Jupyter Server to allow listing hidden files (ContentsManager.allow_hidden=True), since .gitignore files are themselves hidden.",
+      "description": "Skip files and directories matched by .gitignore patterns. In 'frontend' indexing mode, .gitignore files can only be honored when the Contents API exposes hidden files. For Jupyter Server this means ContentsManager.allow_hidden=True; for prebuilt JupyterLite content this is configured at build time in jupyter_lite_config.json.",
       "type": "boolean",
       "default": false
     }
