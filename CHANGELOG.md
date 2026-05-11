@@ -2,6 +2,42 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 2.2.0
+
+([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/v2.1.0...724037196ae14b7b6e32e8d68bd3cae77455230b))
+
+### Enhancements made
+
+- Support `.gitignore` [#76](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/76) ([@jtpio](https://github.com/jtpio), [@krassowski](https://github.com/krassowski))
+- Add more patterns to the default ignore list [#74](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/74) ([@jtpio](https://github.com/jtpio), [@krassowski](https://github.com/krassowski))
+
+### Maintenance and upkeep improvements
+
+- Rotate python versions [#75](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/75) ([@jtpio](https://github.com/jtpio), [@krassowski](https://github.com/krassowski))
+- Bump nanoid from 3.3.7 to 3.3.8 [#68](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/68) ([@jtpio](https://github.com/jtpio))
+
+### Other merged PRs
+
+- Bump js-yaml from 4.1.0 to 4.1.1 [#85](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/85) ([@jtpio](https://github.com/jtpio))
+- Bump ajv from 6.12.6 to 6.15.0 [#83](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/83) ([@jtpio](https://github.com/jtpio))
+- Bump lodash from 4.17.21 to 4.18.1 [#82](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/82) ([@jtpio](https://github.com/jtpio))
+- Bump flatted from 3.3.1 to 3.4.2 [#81](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/81) ([@jtpio](https://github.com/jtpio))
+- Bump postcss from 8.4.47 to 8.5.14 [#80](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/80) ([@jtpio](https://github.com/jtpio))
+- Bump fast-uri from 3.0.1 to 3.1.2 [#79](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/79) ([@jtpio](https://github.com/jtpio))
+- Bump picomatch from 2.3.1 to 2.3.2 [#78](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/78) ([@jtpio](https://github.com/jtpio))
+- Bump lodash-es from 4.17.21 to 4.18.1 [#77](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/77) ([@jtpio](https://github.com/jtpio))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2025-09-02&to=2026-05-11&type=c))
+
+@jtpio ([activity](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ajtpio+updated%3A2025-09-02..2026-05-11&type=Issues)) | @krassowski ([activity](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Akrassowski+updated%3A2025-09-02..2026-05-11&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 2.1.0
 
 ([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/v2.0.2...771dd0923dca17ffd240385205f3ce38a674291d))
@@ -26,8 +62,6 @@
 ([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2024-10-21&to=2025-09-02&type=c))
 
 [@dependabot](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Adependabot+updated%3A2024-10-21..2025-09-02&type=Issues) | [@github-actions](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Agithub-actions+updated%3A2024-10-21..2025-09-02&type=Issues) | [@jtpio](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ajtpio+updated%3A2024-10-21..2025-09-02&type=Issues)
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 2.0.2
 
