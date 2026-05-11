@@ -104,7 +104,7 @@ Behavior when enabled:
   [`ignore`](https://www.npmjs.com/package/ignore) on the frontend, both implementing
   `gitwildmatch` semantics including negation (`!pattern`) and directory-only patterns (`foo/`).
 
-The setting works with both indexing modes, with one caveat:
+The setting works with both indexing modes (configured by `indexingMethod`, see below), with one caveat:
 
 - **Server mode** (default): works regardless of server configuration — `.gitignore` is read
   directly from disk.
