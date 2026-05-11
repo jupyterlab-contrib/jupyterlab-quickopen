@@ -14,6 +14,12 @@ export interface IQuickOpenOptions {
   excludes: string[];
   /** Maximum directory depth to search (Infinity for unlimited) */
   depth?: number;
+  /**
+   * Whether to skip entries matched by .gitignore files.
+   * In frontend indexing mode this requires the Contents API to expose
+   * hidden files, since .gitignore files are themselves hidden.
+   */
+  respectGitignore?: boolean;
 }
 
 /** Interface for quick open content providers */

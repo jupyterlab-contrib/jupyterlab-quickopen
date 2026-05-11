@@ -67,11 +67,11 @@ of your choosing:
 
 ### Patterns to Exclude
 
-You can control which files to exclude from the quick open list using the Jupyter Server settings,
-JupyterLab settings, or both.
+You can control which files to exclude from the quick open list using JupyterLab settings. In
+Jupyter Server-backed deployments, Jupyter Server settings can also affect which files are listed.
 
-On the server side, use the `ContentsManager.allow_hidden` and/or `ContentsManager.hide_globs`
-settings. See the
+For server-backed deployments, use the `ContentsManager.allow_hidden` and/or
+`ContentsManager.hide_globs` settings. See the
 [documentation about Jupyter Server options](https://jupyter-server.readthedocs.io/en/latest/operators/configuring-extensions.html)
 for details.
 
@@ -81,22 +81,80 @@ area to override the default values.
 
 ![Screenshot of the quick open settings editor](./doc/settings.png)
 
+### Honoring `.gitignore`
+
+In addition to static exclude patterns, the extension can skip files and directories matched by
+`.gitignore` files in the workspace. The feature is opt-in — enable it in the _Quick Open_
+settings:
+
+```json
+{
+  "respectGitignore": true
+}
+```
+
+Behavior when enabled:
+
+- Each `.gitignore` is interpreted relative to the directory it lives in, mirroring git's own
+  semantics (e.g., `nested/.gitignore` only applies inside `nested/`).
+- The `.git` directory itself is always skipped (it isn't normally listed in `.gitignore`).
+- Only `.gitignore` files inside the scanned tree are honored. Global gitignore
+  (`~/.config/git/ignore`) and `.git/info/exclude` are not consulted.
+- Pattern matching uses [`pathspec`](https://pypi.org/project/pathspec/) on the server and
+  [`ignore`](https://www.npmjs.com/package/ignore) on the frontend, both implementing
+  `gitwildmatch` semantics including negation (`!pattern`) and directory-only patterns (`foo/`).
+
+The setting works with both indexing modes (configured by `indexingMethod`, see below), with one caveat:
+
+- **Server mode** (default): does not need additional server configuration; `.gitignore` is
+  read directly from disk.
+- **Frontend mode** (usually used in JupyterLite and similar setups): the Contents API must allow
+  listing hidden files, since `.gitignore` is itself a hidden file. For Jupyter Server-backed
+  Contents API deployments, set `ContentsManager.allow_hidden = True` in your
+  `jupyter_server_config.py` (or pass `--ContentsManager.allow_hidden=True` on the command line).
+  For prebuilt JupyterLite content, configure this at build time in `jupyter_lite_config.json` as
+  shown below. Without access to hidden files through the Contents API, the frontend cannot see
+  `.gitignore` files and the option silently has no effect.
+
+> [!TIP]
+> The gitignore feature works without showing `.gitignore` in the file browser. If you'd
+> also like to view or edit your `.gitignore` from JupyterLab, enable _Show Hidden Files_
+> from the _View_ menu (or the file browser's overflow menu). This UI setting is separate
+> from allowing hidden files through the Contents API.
+
 ### JupyterLite
 
 This extension is compatible with JupyterLite when using the client-side indexing mode. Open the
 _Advanced Settings Editor_ (_Settings → Advanced Settings Editor_), select the _Quick Open_ settings
-and set the `indexingMethod` to `"frontend"`. That enables the extension to index files via the
-JupyterLab Contents API on the client (suitable for JupyterLite deployments).
+and set the `indexingMethod` to `"frontend"`. To honor `.gitignore` files, also enable
+`respectGitignore`.
 
 You can add the following `overrides.json` file before building your JupyterLite site:
 
 ```json
 {
   "jupyterlab-quickopen:plugin": {
-    "indexingMethod": "frontend"
+    "indexingMethod": "frontend",
+    "respectGitignore": true
   }
 }
 ```
+
+If your JupyterLite site ships prebuilt content with `.gitignore` files, also include hidden files
+in the generated Contents API responses by adding the following `jupyter_lite_config.json` before
+building:
+
+```json
+{
+  "ContentsManager": {
+    "allow_hidden": true
+  }
+}
+```
+
+This is JupyterLite build configuration, not runtime `jupyter_server_config.py` configuration. The
+file browser still hides dotfiles by default; use the _Show Hidden Files_ setting only if you want
+users to see `.gitignore` in the file browser.
 
 ### Development install
 

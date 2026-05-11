@@ -2,10 +2,14 @@ import os
 import time
 from fnmatch import fnmatch
 
+import pathspec
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import ensure_async
 from tornado import web
 from tornado.escape import json_encode
+
+
+GITIGNORE_FILENAME = ".gitignore"
 
 
 class QuickOpenHandler(APIHandler):
@@ -46,6 +50,43 @@ class QuickOpenHandler(APIHandler):
             )
         )
 
+    def _load_gitignore(self, directory: str) -> pathspec.PathSpec | None:
+        """Read a .gitignore file in the given directory and return a PathSpec.
+
+        Returns None if no .gitignore exists or the file cannot be read.
+        """
+        gitignore_path = os.path.join(directory, GITIGNORE_FILENAME)
+        try:
+            with open(gitignore_path, "r", encoding="utf-8") as f:
+                return pathspec.PathSpec.from_lines("gitwildmatch", f)
+        except (OSError, UnicodeDecodeError):
+            return None
+
+    def _matches_gitignore(
+        self,
+        specs: list[tuple[str, pathspec.PathSpec]],
+        entry_path: str,
+        is_dir: bool,
+    ) -> bool:
+        """Return True if entry_path is ignored by the active .gitignore stack.
+
+        Specs are ordered outermost to innermost. Each spec's patterns are
+        interpreted relative to its base_dir, matching git's per-directory
+        .gitignore semantics: a deeper .gitignore can re-include a path that
+        a shallower one excluded (e.g. ``!important.log``).
+        """
+        ignored = False
+        for base_dir, spec in specs:
+            # pathspec's gitwildmatch expects POSIX-style separators
+            rel = os.path.relpath(entry_path, base_dir).replace(os.sep, "/")
+            check_path = rel + "/" if is_dir else rel
+            # include is True (positive match), False (negation/re-include),
+            # or None (no pattern matched — leave state as-is).
+            result = spec.check_file(check_path)
+            if result.include is not None:
+                ignored = result.include
+        return ignored
+
     async def scan_disk(
         self,
         path: str,
@@ -53,16 +94,43 @@ class QuickOpenHandler(APIHandler):
         on_disk: dict[str, list[str]] | None = None,
         max_depth: int | None = None,
         current_depth: int = 0,
+        respect_gitignore: bool = False,
+        gitignore_specs: list[tuple[str, pathspec.PathSpec]] | None = None,
     ) -> dict[str, list[str]]:
         if on_disk is None:
             on_disk = {}
+        if gitignore_specs is None:
+            gitignore_specs = []
+
         if max_depth is not None and current_depth >= max_depth:
             return on_disk
+
+        if respect_gitignore:
+            spec = self._load_gitignore(path)
+            if spec is not None:
+                gitignore_specs = gitignore_specs + [(path, spec)]
+
         for entry in os.scandir(path):
+            is_dir = entry.is_dir()
+            if respect_gitignore and (
+                # The .git directory is not in .gitignore but should never be
+                # indexed when honoring git semantics.
+                (is_dir and entry.name == ".git")
+                or self._matches_gitignore(gitignore_specs, entry.path, is_dir)
+            ):
+                continue
             if await self.should_hide(entry, excludes):
                 continue
-            elif entry.is_dir():
-                await self.scan_disk(entry.path, excludes, on_disk, max_depth, current_depth + 1)
+            elif is_dir:
+                await self.scan_disk(
+                    entry.path,
+                    excludes,
+                    on_disk,
+                    max_depth,
+                    current_depth + 1,
+                    respect_gitignore=respect_gitignore,
+                    gitignore_specs=gitignore_specs,
+                )
             elif entry.is_file():
                 parent = os.path.relpath(os.path.dirname(entry.path), self.root_dir)
                 on_disk.setdefault(parent, []).append(entry.name)
@@ -77,6 +145,8 @@ class QuickOpenHandler(APIHandler):
         ---------
         exclude: str
             Comma-separated set of file name patterns to exclude
+        respect_gitignore: str
+            "1"/"true" to skip entries matching .gitignore patterns
 
         Responds
         --------
@@ -88,8 +158,23 @@ class QuickOpenHandler(APIHandler):
         current_path = self.get_argument("path")
         depth_arg = self.get_argument("depth", default=None)
         max_depth = int(depth_arg) if depth_arg is not None else None
+        respect_gitignore = self.get_argument(
+            "respect_gitignore", default=""
+        ).lower() in ("1", "true")
         start_ts = time.time()
-        full_path = os.path.join(self.root_dir, current_path) if current_path else self.root_dir
-        contents_by_path = await self.scan_disk(full_path, excludes, max_depth=max_depth)
+        root_dir = os.path.abspath(self.root_dir)
+        if current_path and os.path.splitdrive(current_path)[0]:
+            raise web.HTTPError(404, f"{current_path} is not a relative path")
+        full_path = os.path.abspath(os.path.join(root_dir, current_path))
+        if os.path.dirname(root_dir) != root_dir and not (full_path + os.sep).startswith(
+            root_dir + os.sep
+        ):
+            raise web.HTTPError(404, f"{current_path} is outside the root contents directory")
+        contents_by_path = await self.scan_disk(
+            full_path,
+            excludes,
+            max_depth=max_depth,
+            respect_gitignore=respect_gitignore,
+        )
         delta_ts = time.time() - start_ts
         self.write(json_encode({"scan_seconds": delta_ts, "contents": contents_by_path}))
