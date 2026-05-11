@@ -67,11 +67,11 @@ of your choosing:
 
 ### Patterns to Exclude
 
-You can control which files to exclude from the quick open list using the Jupyter Server settings,
-JupyterLab settings, or both.
+You can control which files to exclude from the quick open list using JupyterLab settings. In
+Jupyter Server-backed deployments, Jupyter Server settings can also affect which files are listed.
 
-On the server side, use the `ContentsManager.allow_hidden` and/or `ContentsManager.hide_globs`
-settings. See the
+For server-backed deployments, use the `ContentsManager.allow_hidden` and/or
+`ContentsManager.hide_globs` settings. See the
 [documentation about Jupyter Server options](https://jupyter-server.readthedocs.io/en/latest/operators/configuring-extensions.html)
 for details.
 

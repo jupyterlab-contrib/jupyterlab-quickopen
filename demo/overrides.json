@@ -1,5 +1,9 @@
 {
+  "@jupyterlab/filebrowser-extension:browser": {
+    "showHiddenFiles": true
+  },
   "jupyterlab-quickopen:plugin": {
-    "indexingMethod": "frontend"
+    "indexingMethod": "frontend",
+    "respectGitignore": true
   }
 }
