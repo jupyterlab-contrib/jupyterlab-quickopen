@@ -7,14 +7,14 @@
  * smaller font, so files with the same name in different folders can be
  * told apart.
  */
-.lm-CommandPalette-itemContent {
+.jp-QuickOpen .lm-CommandPalette-itemContent {
   display: flex;
   flex-direction: row;
   align-items: baseline;
   min-width: 0;
 }
 
-.lm-CommandPalette-itemContent .lm-CommandPalette-itemLabel {
+.jp-QuickOpen .lm-CommandPalette-itemContent .lm-CommandPalette-itemLabel {
   flex: 0 0 auto;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -22,7 +22,7 @@
   max-width: 60%;
 }
 
-.jp-QuickOpen-itemPath {
+.jp-QuickOpen .jp-QuickOpen-itemPath {
   flex: 0 1 auto;
   min-width: 0;
   margin-left: 8px;
@@ -33,6 +33,6 @@
   white-space: nowrap;
 }
 
-.lm-CommandPalette-item.lm-mod-active .jp-QuickOpen-itemPath {
+.jp-QuickOpen .lm-CommandPalette-item.lm-mod-active .jp-QuickOpen-itemPath {
   color: var(--jp-ui-inverse-font-color2);
 }

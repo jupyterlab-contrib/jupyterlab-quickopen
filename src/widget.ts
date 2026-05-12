@@ -48,6 +48,7 @@ export class QuickOpenWidget extends CommandPalette {
     super({ renderer: new QuickOpenRenderer(), ...options });
 
     this.id = 'jupyterlab-quickopen';
+    this.addClass('jp-QuickOpen');
     this.title.iconClass = 'jp-SideBar-tabIcon jp-SearchIcon';
     this.title.caption = 'Quick Open';
 
