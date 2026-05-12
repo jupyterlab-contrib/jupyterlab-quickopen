@@ -1,3 +1,38 @@
 .jp-SearchIcon {
   background-image: var(--jp-icon-search);
 }
+
+/*
+ * Show the parent directory inline next to the filename, in a lighter,
+ * smaller font, so files with the same name in different folders can be
+ * told apart.
+ */
+.lm-CommandPalette-itemContent {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.lm-CommandPalette-itemContent .lm-CommandPalette-itemLabel {
+  flex: 0 0 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60%;
+}
+
+.jp-QuickOpen-itemPath {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin-left: 8px;
+  color: var(--jp-ui-font-color2);
+  font-size: var(--jp-ui-font-size0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lm-CommandPalette-item.lm-mod-active .jp-QuickOpen-itemPath {
+  color: var(--jp-ui-inverse-font-color2);
+}
