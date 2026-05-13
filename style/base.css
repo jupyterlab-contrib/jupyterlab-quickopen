@@ -14,7 +14,7 @@
   min-width: 0;
 }
 
-.jp-QuickOpen .lm-CommandPalette-itemContent .lm-CommandPalette-itemLabel {
+.jp-QuickOpen .lm-CommandPalette-itemContent > .lm-CommandPalette-itemLabel {
   flex: 0 0 auto;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -22,7 +22,7 @@
   max-width: 60%;
 }
 
-.jp-QuickOpen .jp-QuickOpen-itemPath {
+.jp-QuickOpen-itemPath {
   flex: 0 1 auto;
   min-width: 0;
   margin-left: 8px;
