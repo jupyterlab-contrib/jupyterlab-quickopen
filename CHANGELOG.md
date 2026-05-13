@@ -2,6 +2,25 @@
 
 <!-- <START NEW CHANGELOG ENTRY> -->
 
+## 2.3.0
+
+([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/v2.2.0...0b9d8c2dfec7d10c2bf6528a848983050b7c7233))
+
+### Enhancements made
+
+- Show folder in the search palette [#87](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/pull/87) ([@jtpio](https://github.com/jtpio), [@krassowski](https://github.com/krassowski))
+
+### Contributors to this release
+
+The following people contributed discussions, new ideas, code and documentation contributions, and review.
+See [our definition of contributors](https://github-activity.readthedocs.io/en/latest/use/#how-does-this-tool-define-contributions-in-the-reports).
+
+([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2026-05-11&to=2026-05-13&type=c))
+
+@jtpio ([activity](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ajtpio+updated%3A2026-05-11..2026-05-13&type=Issues)) | @krassowski ([activity](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Akrassowski+updated%3A2026-05-11..2026-05-13&type=Issues))
+
+<!-- <END NEW CHANGELOG ENTRY> -->
+
 ## 2.2.0
 
 ([Full Changelog](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/compare/v2.1.0...724037196ae14b7b6e32e8d68bd3cae77455230b))
@@ -35,8 +54,6 @@ See [our definition of contributors](https://github-activity.readthedocs.io/en/l
 ([GitHub contributors page for this release](https://github.com/jupyterlab-contrib/jupyterlab-quickopen/graphs/contributors?from=2025-09-02&to=2026-05-11&type=c))
 
 @jtpio ([activity](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Ajtpio+updated%3A2025-09-02..2026-05-11&type=Issues)) | @krassowski ([activity](https://github.com/search?q=repo%3Ajupyterlab-contrib%2Fjupyterlab-quickopen+involves%3Akrassowski+updated%3A2025-09-02..2026-05-11&type=Issues))
-
-<!-- <END NEW CHANGELOG ENTRY> -->
 
 ## 2.1.0
 
