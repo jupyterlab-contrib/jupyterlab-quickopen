@@ -3,8 +3,34 @@ import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { IDisposable } from '@lumino/disposable';
 import { Message } from '@lumino/messaging';
 import { ISignal, Signal } from '@lumino/signaling';
+import { h, VirtualElement } from '@lumino/virtualdom';
 import { CommandPalette } from '@lumino/widgets';
 import { IQuickOpenProvider } from './tokens';
+
+/**
+ * The CSS class added to the inline parent directory next to the filename.
+ */
+const ITEM_PATH_CLASS = 'jp-QuickOpen-itemPath';
+
+/**
+ * A renderer that shows the parent directory inline next to the filename,
+ * styled like VS Code's quick open palette so files with the same name in
+ * different folders can be told apart.
+ */
+class QuickOpenRenderer extends CommandPalette.Renderer {
+  renderItemContent(data: CommandPalette.IItemRenderData): VirtualElement {
+    const path = data.item.caption;
+    const label = this.renderItemLabel(data);
+    if (!path || path === '.') {
+      return h.div({ className: 'lm-CommandPalette-itemContent' }, label);
+    }
+    return h.div(
+      { className: 'lm-CommandPalette-itemContent' },
+      label,
+      h.div({ className: ITEM_PATH_CLASS, title: path }, path)
+    );
+  }
+}
 
 /**
  * Shows files nested under directories in the root notebooks directory configured on the server.
@@ -19,9 +45,10 @@ export class QuickOpenWidget extends CommandPalette {
     provider: IQuickOpenProvider,
     options: CommandPalette.IOptions
   ) {
-    super(options);
+    super({ renderer: new QuickOpenRenderer(), ...options });
 
     this.id = 'jupyterlab-quickopen';
+    this.addClass('jp-QuickOpen');
     this.title.iconClass = 'jp-SideBar-tabIcon jp-SearchIcon';
     this.title.caption = 'Quick Open';
 
@@ -85,6 +112,7 @@ export class QuickOpenWidget extends CommandPalette {
         if (!this.commands.hasCommand(command)) {
           const disposable = this.commands.addCommand(command, {
             label: fn,
+            caption: category,
             execute: () => {
               // Emit a selection signal
               this._pathSelected.emit(command);
